@@ -1,0 +1,61 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import BlogGrid from '@components/BlogGrid.astro';
+
+export async function getStaticPaths() {
+  const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+
+  // Collect all unique tags.
+  const tags = [...new Set(allPosts.flatMap((post) => post.data.tags))];
+
+  return tags.map((tag) => ({
+    params: { tag },
+    props: {
+      tag,
+      posts: allPosts
+        .filter((post) => post.data.tags.includes(tag))
+        .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()),
+    },
+  }));
+}
+
+const { tag, posts } = Astro.props;
+---
+
+<BaseLayout
+  title={`#${tag} — Tsubaki`}
+  description={`All posts tagged with "${tag}" on the Tsubaki blog.`}
+>
+  <div class="container section">
+    <div style="margin-bottom: var(--space-6);">
+      <a
+        href="/tags"
+        style="font-size: var(--text-sm); color: var(--color-muted); text-decoration: none; display: inline-flex; align-items: center; gap: var(--space-2);"
+      >
+        &larr; All Tags
+      </a>
+    </div>
+
+    <header class="section-header reveal">
+      <h1 class="section-title">#{tag}</h1>
+      <span style="font-size: var(--text-sm); color: var(--color-muted);">
+        {posts.length} {posts.length === 1 ? 'post' : 'posts'}
+      </span>
+    </header>
+
+    {posts.length > 0 ? (
+      <BlogGrid posts={posts} />
+    ) : (
+      <p style="color: var(--color-muted);">No posts found for this tag.</p>
+    )}
+  </div>
+</BaseLayout>
+
+<script>
+  import { scrollReveal } from '@utils/animations';
+
+  document.addEventListener('astro:page-load', async () => {
+    await scrollReveal({ targets: '.reveal', stagger: 0.1 });
+  });
+</script>

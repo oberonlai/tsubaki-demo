@@ -1,0 +1,127 @@
+---
+title: "GSAP Animations in Astro — A Practical Guide"
+description: "How we wired GSAP ScrollTrigger and SplitText into an Astro blog theme for buttery-smooth animations."
+date: 2026-02-01
+tags: ["gsap", "astro", "animation", "tutorial"]
+author: "Codotx Team"
+---
+
+## Why GSAP in an Astro Project?
+
+Astro ships zero JavaScript by default — which is exactly why pairing it with GSAP requires some care. Done naively, you will block rendering or break server-side rendering. Done right, you get silky animations *and* a perfect Lighthouse score.
+
+This post covers the patterns we use in Tsubaki.
+
+## The Golden Rule: Dynamic Imports
+
+Never statically import GSAP at the top of a `<script>` tag in Astro.
+
+```ts
+// Bad — bundles GSAP into the main chunk and may cause SSR errors.
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+```
+
+Instead, use dynamic imports inside async functions:
+
+```ts
+// Good — loads GSAP only on the client, after page hydration.
+async function initAnimations(): Promise<void> {
+  const { gsap } = await import('gsap');
+  const { ScrollTrigger } = await import('gsap/ScrollTrigger');
+  gsap.registerPlugin(ScrollTrigger);
+
+  gsap.from('.hero', { autoAlpha: 0, y: 20, duration: 0.5 });
+}
+```
+
+## Scroll Reveal Pattern
+
+The `.reveal` class sets `visibility: hidden` on elements initially. GSAP's `autoAlpha` property transitions both `opacity` and `visibility` simultaneously, which keeps the DOM accessible to screen readers while hiding the element visually.
+
+```css
+.reveal {
+  visibility: hidden;
+}
+```
+
+```ts
+document.addEventListener('astro:page-load', async () => {
+  const { gsap } = await import('gsap');
+  const { ScrollTrigger } = await import('gsap/ScrollTrigger');
+  gsap.registerPlugin(ScrollTrigger);
+
+  gsap.to('.reveal', {
+    autoAlpha: 1,
+    y: 0,
+    stagger: 0.12,
+    duration: 0.8,
+    ease: 'power2.out',
+    scrollTrigger: {
+      trigger: '.reveal',
+      start: 'top 85%',
+    },
+  });
+});
+```
+
+## Reading Progress Bar with ScrollTrigger
+
+Instead of a scroll event listener (which fires on the main thread constantly), we use `ScrollTrigger.create` with `onUpdate`:
+
+```ts
+ScrollTrigger.create({
+  trigger: document.body,
+  start: 'top top',
+  end: 'bottom bottom',
+  onUpdate: (self) => {
+    gsap.set('#reading-progress-bar', { scaleX: self.progress });
+  },
+});
+```
+
+The `gsap.set()` call is synchronous and runs on the main thread — but it only triggers on scroll events managed by GSAP's internal RAF loop, which is much more efficient than adding your own `scroll` listener.
+
+## Text Split Animations
+
+For hero headings, we split text into individual words using GSAP SplitText (or a manual fallback). Each word animates in with a stagger:
+
+```ts
+await splitReveal({
+  targets: '.hero-title',
+  type: 'words',
+  duration: 0.7,
+  stagger: 0.06,
+  y: 20,
+});
+```
+
+## Integrating with Astro View Transitions
+
+Astro's View Transitions fire `astro:page-load` on every navigation. Use this event — not `DOMContentLoaded` — to re-initialise GSAP animations:
+
+```ts
+document.addEventListener('astro:page-load', async () => {
+  // Reinitialise on every page load, including navigations.
+  await scrollReveal({ targets: '.reveal' });
+});
+```
+
+Before each navigation, `astro:before-swap` fires. Use it to animate the page out:
+
+```ts
+document.addEventListener('astro:before-swap', async () => {
+  const { gsap } = await import('gsap');
+  const main = document.querySelector('main');
+  if (main) {
+    gsap.to(main, { autoAlpha: 0, duration: 0.25 });
+  }
+});
+```
+
+## Performance Tips
+
+1. **Register plugins once.** Calling `gsap.registerPlugin(ScrollTrigger)` is idempotent, but prefer doing it once at module scope (inside your async init function).
+2. **Kill ScrollTrigger instances on navigation.** Use `ScrollTrigger.getAll().forEach(t => t.kill())` in `astro:before-swap` to prevent memory leaks.
+3. **Use `will-change: transform`** on the reading progress bar only — applying it broadly hurts performance.
+4. **Prefer `gsap.context()`** to scope animations to a container, making cleanup trivial.

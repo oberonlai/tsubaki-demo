@@ -1,0 +1,55 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import TagCloud from '@components/TagCloud.astro';
+
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+
+// Count posts per tag.
+const tagCounts: Record<string, number> = {};
+allPosts.forEach((post) => {
+  post.data.tags.forEach((tag) => {
+    tagCounts[tag] = (tagCounts[tag] ?? 0) + 1;
+  });
+});
+
+const tags = Object.entries(tagCounts)
+  .map(([name, count]) => ({ name, count }))
+  .sort((a, b) => b.count - a.count);
+---
+
+<BaseLayout
+  title="Tags — Tsubaki"
+  description="Browse all topics and tags on the Tsubaki blog."
+>
+  <div class="container section">
+    <header class="section-header reveal">
+      <h1 class="section-title">Tags</h1>
+      <span style="font-size: var(--text-sm); color: var(--color-muted);">
+        {tags.length} {tags.length === 1 ? 'tag' : 'tags'}
+      </span>
+    </header>
+
+    <div class="reveal" style="margin-bottom: var(--space-12);">
+      <TagCloud tags={tags} />
+    </div>
+
+    <!-- Tags grid with post counts -->
+    <div class="tags-grid reveal">
+      {tags.map(({ name, count }) => (
+        <a href={`/tags/${name}`} class="tag-card">
+          <span class="tag-card__name">{name}</span>
+          <span class="tag-card__count">{count}</span>
+        </a>
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  import { scrollReveal } from '@utils/animations';
+
+  document.addEventListener('astro:page-load', async () => {
+    await scrollReveal({ targets: '.reveal', stagger: 0.08 });
+  });
+</script>

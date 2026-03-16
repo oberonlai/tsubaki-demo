@@ -1,0 +1,117 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from './BaseLayout.astro';
+import ReadingProgress from '@components/ReadingProgress.astro';
+import TableOfContents from '@components/TableOfContents.astro';
+import AuthorBio from '@components/AuthorBio.astro';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+  headings: Array<{ depth: number; slug: string; text: string }>;
+}
+
+const { post, headings } = Astro.props;
+const { title, description, date, tags, author, image, updatedDate } = post.data;
+
+const formattedDate = new Intl.DateTimeFormat('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+}).format(date);
+
+const updatedFormatted = updatedDate
+  ? new Intl.DateTimeFormat('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    }).format(updatedDate)
+  : null;
+
+const siteUrl = 'https://tsubaki.codotx.com';
+const postUrl = new URL(Astro.url.pathname, siteUrl).href;
+
+const articleSchema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: title,
+  description: description,
+  datePublished: date.toISOString(),
+  dateModified: (updatedDate ?? date).toISOString(),
+  author: {
+    '@type': 'Person',
+    name: author,
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'Tsubaki',
+    url: siteUrl,
+  },
+  url: postUrl,
+  image: image ? new URL(image.src, siteUrl).href : undefined,
+  keywords: tags.join(', '),
+});
+---
+
+<BaseLayout title={title} description={description} image={image?.src} canonicalUrl={postUrl}>
+  <script type="application/ld+json" set:html={articleSchema} slot="head" />
+
+  <ReadingProgress />
+
+  <div class="container">
+    <div class="post-layout">
+      <article class="post-content">
+        <header class="post-header">
+          <div class="post-header__eyebrow">
+            {tags.length > 0 && (
+              <div class="post-header__tags">
+                {tags.map((tag) => (
+                  <a href={`/tags/${tag}`} class="post-header__tag">{tag}</a>
+                ))}
+              </div>
+            )}
+            <time class="post-header__date" datetime={date.toISOString()}>
+              {formattedDate}
+            </time>
+            {updatedFormatted && (
+              <span class="updated-badge">Updated {updatedFormatted}</span>
+            )}
+          </div>
+
+          <h1 class="post-header__title hero-title reveal">{title}</h1>
+
+          <p class="post-header__description reveal">{description}</p>
+
+          {image && (
+            <img
+              src={image.src}
+              alt={image.alt}
+              class="post-header__cover"
+              width="1200"
+              height="525"
+              loading="eager"
+            />
+          )}
+        </header>
+
+        <div class="prose post-wrap">
+          <slot />
+        </div>
+
+        <AuthorBio author={author} />
+      </article>
+
+      <aside class="post-sidebar">
+        <TableOfContents headings={headings} />
+      </aside>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  import { splitReveal, scrollReveal } from '@utils/animations';
+
+  document.addEventListener('astro:page-load', async () => {
+    await splitReveal({ targets: '.hero-title', type: 'words', duration: 0.7, stagger: 0.06 });
+    await scrollReveal({ targets: '.reveal', stagger: 0.12 });
+  });
+</script>

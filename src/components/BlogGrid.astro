@@ -1,0 +1,84 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import BlogCard from './BlogCard.astro';
+
+interface Props {
+  posts: CollectionEntry<'blog'>[];
+  showFilter?: boolean;
+}
+
+const { posts, showFilter = false } = Astro.props;
+
+// Collect unique tags from all posts for the filter UI.
+const allTags = showFilter
+  ? [...new Set(posts.flatMap((p) => p.data.tags))].sort()
+  : [];
+---
+
+{showFilter && allTags.length > 0 && (
+  <div class="tag-filter" role="group" aria-label="Filter posts by tag">
+    <button
+      class="tag-filter__btn is-active"
+      data-filter="all"
+      type="button"
+    >
+      All
+    </button>
+    {allTags.map((tag) => (
+      <button
+        class="tag-filter__btn"
+        data-filter={tag}
+        type="button"
+      >
+        {tag}
+      </button>
+    ))}
+  </div>
+)}
+
+<div class="blog-grid" id="blog-grid">
+  {posts.map((post, index) => (
+    <BlogCard
+      post={post}
+      variant={index === 0 ? 'featured' : 'default'}
+    />
+  ))}
+</div>
+
+{showFilter && (
+  <script>
+    function initTagFilter(): void {
+      const filterBtns = document.querySelectorAll<HTMLButtonElement>('.tag-filter__btn');
+      const grid = document.getElementById('blog-grid');
+
+      if (grid === null) {
+        return;
+      }
+
+      filterBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const filter = btn.dataset.filter;
+
+          // Update active state.
+          filterBtns.forEach((b) => b.classList.remove('is-active'));
+          btn.classList.add('is-active');
+
+          // Show/hide cards based on tag.
+          const cards = grid.querySelectorAll<HTMLElement>('.blog-card');
+          cards.forEach((card) => {
+            if (filter === 'all') {
+              card.style.display = '';
+              return;
+            }
+
+            const cardTags = (card.dataset.tags ?? '').split(',');
+            const visible = cardTags.includes(filter ?? '');
+            card.style.display = visible ? '' : 'none';
+          });
+        });
+      });
+    }
+
+    document.addEventListener('astro:page-load', initTagFilter);
+  </script>
+)}

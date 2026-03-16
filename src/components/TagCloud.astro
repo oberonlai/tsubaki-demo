@@ -1,0 +1,37 @@
+---
+interface Props {
+  tags: Array<{ name: string; count: number }>;
+}
+
+const { tags } = Astro.props;
+
+// Scale font size between 0.8rem and 1.2rem based on count.
+const maxCount = Math.max(...tags.map((t) => t.count), 1);
+const minCount = Math.min(...tags.map((t) => t.count), 1);
+
+function getFontSize(count: number): string {
+  if (maxCount === minCount) {
+    return '1rem';
+  }
+
+  const ratio = (count - minCount) / (maxCount - minCount);
+  const size = 0.8 + ratio * 0.4;
+
+  return `${size.toFixed(2)}rem`;
+}
+---
+
+<div class="tag-cloud" role="list">
+  {tags.map(({ name, count }) => (
+    <a
+      href={`/tags/${name}`}
+      class="tag-cloud__item"
+      role="listitem"
+      style={`font-size: ${getFontSize(count)}`}
+      title={`${count} ${count === 1 ? 'post' : 'posts'}`}
+    >
+      {name}
+      <span class="sr-only">({count} {count === 1 ? 'post' : 'posts'})</span>
+    </a>
+  ))}
+</div>

@@ -1,0 +1,45 @@
+{
+  "name": "@codotx/template-tsubaki",
+  "version": "1.0.0",
+  "description": "Tsubaki (椿) — Japanese-inspired blog theme for Astro with GSAP animations",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "lint": "eslint src --ext .js,.ts,.astro",
+    "format": "prettier --write \"**/*.{js,ts,astro,css,json,md,mdx}\""
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^3.1.0",
+    "@astrojs/rss": "^4.0.0",
+    "@astrojs/sitemap": "^3.1.6",
+    "astro": "^4.15.0",
+    "gsap": "^3.12.5"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0"
+  },
+  "keywords": [
+    "astro-component",
+    "withastro",
+    "blog",
+    "theme",
+    "japanese",
+    "gsap",
+    "animation",
+    "minimal",
+    "dark-mode",
+    "tailwind"
+  ],
+  "homepage": "https://tsubaki.codotx.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/codotx/tsubaki"
+  },
+  "bugs": {
+    "url": "https://github.com/codotx/tsubaki/issues"
+  },
+  "license": "SEE LICENSE IN LICENSE",
+  "author": "Codotx <hello@codotx.com> (https://codotx.com)"
+}

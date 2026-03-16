@@ -1,0 +1,31 @@
+---
+// Reading progress bar — uses GSAP ScrollTrigger to tween scaleX.
+---
+
+<div id="reading-progress" aria-hidden="true">
+  <div id="reading-progress-bar"></div>
+</div>
+
+<script>
+  async function initReadingProgress(): Promise<void> {
+    const bar = document.getElementById('reading-progress-bar');
+    if (bar === null) {
+      return;
+    }
+
+    const { gsap } = await import('gsap');
+    const { ScrollTrigger } = await import('gsap/ScrollTrigger');
+    gsap.registerPlugin(ScrollTrigger);
+
+    ScrollTrigger.create({
+      trigger: document.body,
+      start: 'top top',
+      end: 'bottom bottom',
+      onUpdate: (self) => {
+        gsap.set(bar, { scaleX: self.progress });
+      },
+    });
+  }
+
+  document.addEventListener('astro:page-load', initReadingProgress);
+</script>

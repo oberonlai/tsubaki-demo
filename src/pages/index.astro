@@ -1,0 +1,51 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import BlogGrid from '@components/BlogGrid.astro';
+
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+const sortedPosts = allPosts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const featuredPosts = sortedPosts.slice(0, 3);
+---
+
+<BaseLayout
+  title="Tsubaki — Japanese-Inspired Blog Theme"
+  description="A minimal, performant blog theme built with Astro. Sharp editorial design, buttery-smooth GSAP animations, and 95+ Lighthouse scores."
+>
+  <!-- Hero section -->
+  <section class="hero">
+    <div class="container" style="position: relative;">
+      <span class="hero__eyebrow">Stories &amp; Ideas</span>
+      <h1 class="hero__title hero-title">Stories<br />&amp; Ideas</h1>
+      <p class="hero__subtitle reveal">
+        A minimal, performant blog built with Astro. Sharp editorial design,
+        buttery-smooth animations, and a relentless focus on reading experience.
+      </p>
+      <a href="/blog" class="hero__cta reveal">
+        Browse the blog &rarr;
+      </a>
+      <div class="hero__decoration" aria-hidden="true">椿</div>
+    </div>
+  </section>
+
+  <!-- Featured posts section -->
+  <section class="section">
+    <div class="container">
+      <header class="section-header reveal">
+        <h2 class="section-title">Latest Posts</h2>
+        <a href="/blog" class="section-link">View all &rarr;</a>
+      </header>
+
+      <BlogGrid posts={featuredPosts} />
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  import { splitReveal, scrollReveal } from '@utils/animations';
+
+  document.addEventListener('astro:page-load', async () => {
+    await splitReveal({ targets: '.hero-title', type: 'words', duration: 0.7, stagger: 0.06 });
+    await scrollReveal({ targets: '.reveal', stagger: 0.12 });
+  });
+</script>

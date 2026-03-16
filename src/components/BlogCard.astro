@@ -1,0 +1,63 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+  variant?: 'default' | 'featured' | 'compact';
+}
+
+const { post, variant = 'default' } = Astro.props;
+const { title, description, date, tags, author, image } = post.data;
+const slug = post.slug;
+
+const formattedDate = new Intl.DateTimeFormat('en-US', {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+}).format(date);
+
+const cardClass = [
+  'blog-card',
+  variant === 'featured' ? 'blog-card--featured' : '',
+  variant === 'compact' ? 'blog-card--compact' : '',
+  'reveal',
+].filter(Boolean).join(' ');
+---
+
+<article class={cardClass} data-tags={tags.join(',')}>
+  <div class="blog-card__image-wrap">
+    {image ? (
+      <Image
+        src={image.src}
+        alt={image.alt}
+        width={variant === 'featured' ? 800 : 480}
+        height={variant === 'featured' ? 450 : 270}
+        loading="lazy"
+      />
+    ) : (
+      <div class="blog-card__image-placeholder" aria-hidden="true">椿</div>
+    )}
+  </div>
+
+  <div class="blog-card__body">
+    {tags.length > 0 && (
+      <div class="blog-card__tags">
+        {tags.map((tag) => (
+          <a href={`/tags/${tag}`} class="blog-card__tag">{tag}</a>
+        ))}
+      </div>
+    )}
+
+    <a href={`/blog/${slug}`} class="blog-card__title">{title}</a>
+
+    <p class="blog-card__excerpt">{description}</p>
+
+    <div class="blog-card__meta">
+      <time class="blog-card__date" datetime={date.toISOString()}>
+        {formattedDate}
+      </time>
+      <span class="blog-card__author">{author}</span>
+    </div>
+  </div>
+</article>

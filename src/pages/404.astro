@@ -1,0 +1,41 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="404 — Page Not Found — Tsubaki"
+  description="The page you are looking for could not be found."
+>
+  <div class="container">
+    <div class="error-page">
+      <span class="error-page__number" id="error-number" aria-hidden="true">404</span>
+      <h1 class="error-page__title">Page not found</h1>
+      <p class="error-page__text">
+        The page you are looking for doesn't exist or has been moved.
+      </p>
+      <a href="/" class="error-page__link">&larr; Back to home</a>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  async function init404Animation(): Promise<void> {
+    const el = document.getElementById('error-number');
+    if (el === null) {
+      return;
+    }
+
+    const { gsap } = await import('gsap');
+
+    // Brief bounce animation on the 404 number.
+    gsap.from(el, {
+      autoAlpha: 0,
+      y: -40,
+      duration: 0.6,
+      ease: 'bounce.out',
+      delay: 0.1,
+    });
+  }
+
+  document.addEventListener('astro:page-load', init404Animation);
+</script>

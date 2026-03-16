@@ -1,0 +1,17 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container footer__inner">
+    <p class="footer__text">
+      &copy; {year} Tsubaki. Built with
+      <a href="https://astro.build" class="footer__link" target="_blank" rel="noopener noreferrer">Astro</a>.
+    </p>
+    <nav class="footer__links" aria-label="Footer navigation">
+      <a href="/rss.xml" class="footer__link">RSS</a>
+      <a href="/sitemap-index.xml" class="footer__link">Sitemap</a>
+      <a href="/about" class="footer__link">About</a>
+    </nav>
+  </div>
+</footer>
