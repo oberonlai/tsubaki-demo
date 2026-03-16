@@ -92,13 +92,17 @@ const fullTitle = title.includes('Tsubaki') ? title : `${title} — Tsubaki`;
     </main>
     <Footer />
 
-    <!-- Theme persistence: runs before first paint to avoid flash -->
+    <!-- Theme persistence: runs before first paint and after View Transition swaps to avoid flash -->
     <script is:inline>
       (function () {
-        var stored = localStorage.getItem('tsubaki-theme');
-        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        var theme = stored !== null ? stored : prefersDark ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', theme);
+        function applyTheme() {
+          var stored = localStorage.getItem('tsubaki-theme');
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var theme = stored !== null ? stored : (prefersDark ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        }
+        applyTheme();
+        document.addEventListener('astro:after-swap', applyTheme);
       })();
     </script>
 
