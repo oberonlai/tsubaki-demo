@@ -1,23 +1,37 @@
 ---
 import ThemeToggle from './ThemeToggle.astro';
-
-const base = import.meta.env.BASE_URL;
+import { withBase } from '@utils/base-path';
 
 const navLinks = [
-  { href: base, label: 'Home' },
-  { href: `${base}/blog`, label: 'Blog' },
-  { href: `${base}/about`, label: 'About' },
-  { href: `${base}/tags`, label: 'Tags' },
+  { href: withBase('/'), label: 'Home' },
+  { href: withBase('/blog'), label: 'Blog' },
+  { href: withBase('/search'), label: 'Search' },
+  { href: withBase('/about'), label: 'About' },
+  { href: withBase('/tags'), label: 'Tags' },
 ];
 
-const currentPath = Astro.url.pathname;
+const base = withBase('/');
+const currentPath = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const normalizedBase = base.replace(/\/+$/, '') || '/';
+
+function isActive(href: string): boolean {
+  const target = href.replace(/\/+$/, '') || '/';
+  if (target === normalizedBase) {
+    return currentPath === target;
+  }
+
+  return currentPath === target || currentPath.startsWith(`${target}/`);
+}
 ---
 
 <nav class="nav" aria-label="Main navigation">
   <div class="container nav__inner">
     <a href={base} class="nav__logo" aria-label="Tsubaki — Home">
       <span class="nav__logo-kanji" aria-hidden="true">椿</span>
-      <span>Tsubaki</span>
+      <span class="nav__logo-copy">
+        <span class="nav__logo-name">Tsubaki</span>
+        <span class="nav__logo-note">Ceremonial editorial theme</span>
+      </span>
     </a>
 
     <ul class="nav__links" role="list">
@@ -26,7 +40,7 @@ const currentPath = Astro.url.pathname;
           <a
             href={href}
             class="nav__link"
-            aria-current={currentPath === href || (href !== '/' && currentPath.startsWith(href)) ? 'page' : undefined}
+            aria-current={isActive(href) ? 'page' : undefined}
           >
             {label}
           </a>

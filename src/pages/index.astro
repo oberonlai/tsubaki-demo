@@ -2,42 +2,98 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '@layouts/BaseLayout.astro';
 import BlogGrid from '@components/BlogGrid.astro';
+import NewsletterSignup from '@components/NewsletterSignup.astro';
+import { withBase } from '@utils/base-path';
 
 const allPosts = await getCollection('blog', ({ data }) => !data.draft);
 const sortedPosts = allPosts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 const featuredPosts = sortedPosts.slice(0, 3);
-const base = import.meta.env.BASE_URL;
+const latestPost = sortedPosts[0];
+const journalStats = [
+  { value: '95+', label: 'Lighthouse target' },
+  { value: 'Ma', label: 'Space as composition' },
+  { value: '3', label: 'Lead essays this issue' },
+];
 ---
 
 <BaseLayout
   title="Tsubaki — Japanese-Inspired Blog Theme"
   description="A minimal, performant blog theme built with Astro. Sharp editorial design, buttery-smooth GSAP animations, and 95+ Lighthouse scores."
 >
-  <!-- Hero section -->
   <section class="hero">
-    <div class="container" style="position: relative;">
-      <span class="hero__eyebrow">Stories &amp; Ideas</span>
-      <h1 class="hero__title hero-title">Stories<br />&amp; Ideas</h1>
-      <p class="hero__subtitle reveal">
-        A minimal, performant blog built with Astro. Sharp editorial design,
-        buttery-smooth animations, and a relentless focus on reading experience.
-      </p>
-      <a href={`${base}/blog`} class="hero__cta reveal">
-        Browse the blog &rarr;
-      </a>
-      <div class="hero__decoration" aria-hidden="true">椿</div>
+    <div class="container hero__grid">
+      <div class="hero__copy" style="position: relative;" data-kanji="椿">
+        <span class="hero__eyebrow">Issue No. 01</span>
+        <h1 class="hero__title hero-title">A blog theme designed like a keepsake object.</h1>
+        <p class="hero__subtitle reveal">
+          Tsubaki turns publishing into ceremony. The layout layers paper tones,
+          vertical rhythm, and camellia-red precision so every article feels
+          collected rather than dumped into a template.
+        </p>
+        <div class="hero__actions reveal">
+          <a href={withBase('/blog')} class="hero__cta">Open the journal</a>
+          <a href={withBase('/search')} class="hero__secondary">Search the archive</a>
+        </div>
+      </div>
+
+      <div class="hero__panel reveal">
+        <p class="hero__panel-title">This issue</p>
+        <ul class="hero__principles" role="list">
+          <li>Paper-toned surfaces with disciplined red accents</li>
+          <li>Asymmetry used to guide attention, not create noise</li>
+          <li>Scroll reveals paced like page turns</li>
+        </ul>
+
+        <div class="hero__metrics">
+          {journalStats.map((item) => (
+            <div class="hero__metric">
+              <span class="hero__metric-value">{item.value}</span>
+              <span class="hero__metric-label">{item.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- Featured posts section -->
   <section class="section">
     <div class="container">
       <header class="section-header reveal">
-        <h2 class="section-title">Latest Posts</h2>
-        <a href={`${base}/blog`} class="section-link">View all &rarr;</a>
+        <div>
+          <p class="section-kicker">Lead essays</p>
+          <h2 class="section-title">Latest posts</h2>
+        </div>
+        <a href={withBase('/blog')} class="section-link">View full archive &rarr;</a>
       </header>
 
       <BlogGrid posts={featuredPosts} />
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="page-hero reveal" data-kanji="文">
+        <div class="page-hero__grid">
+          <div>
+            <p class="page-hero__eyebrow">Reading system</p>
+            <h2 class="page-hero__title">Built for writers who care how silence looks on the page.</h2>
+            <p class="page-hero__description">
+              Search, related essays, reading time, social sharing, and a persistent table of
+              contents are already composed into the shell. The utility is there, but the
+              atmosphere does most of the work.
+            </p>
+          </div>
+          <div class="page-hero__meta">
+            <div class="page-hero__stat">Includes search results, tag archive, and article lightbox.</div>
+            {latestPost && (
+              <div class="page-hero__stat">
+                Latest entry: <a href={withBase(`/blog/${latestPost.id}`)}>{latestPost.data.title}</a>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+      <NewsletterSignup />
     </div>
   </section>
 </BaseLayout>

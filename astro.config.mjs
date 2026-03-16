@@ -1,11 +1,12 @@
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
+import sitemap from '@astrojs/sitemap';
 import { fileURLToPath } from 'node:url';
 
 export default defineConfig({
   site: 'https://oberonlai.github.io',
   base: '/tsubaki-demo',
-  integrations: [mdx()],
+  integrations: [mdx(), sitemap()],
   prefetch: {
     prefetchAll: true,
     defaultStrategy: 'hover',

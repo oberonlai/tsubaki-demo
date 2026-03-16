@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
+import { withBase } from '@utils/base-path';
 ---
 
 <BaseLayout
@@ -7,13 +8,18 @@ import BaseLayout from '@layouts/BaseLayout.astro';
   description="The page you are looking for could not be found."
 >
   <div class="container">
-    <div class="error-page">
+    <div class="error-page" data-kanji="余白">
       <span class="error-page__number" id="error-number" aria-hidden="true">404</span>
-      <h1 class="error-page__title">Page not found</h1>
+      <p class="section-kicker">Not in this archive</p>
+      <h1 class="error-page__title">The page dissolved back into blank space.</h1>
       <p class="error-page__text">
-        The page you are looking for doesn't exist or has been moved.
+        The address may have shifted, or the note was never bound into this issue.
+        Return to the journal, or search the archive directly.
       </p>
-      <a href={import.meta.env.BASE_URL} class="error-page__link">&larr; Back to home</a>
+      <div class="error-page__actions">
+        <a href={withBase('/')} class="error-page__link">Back to home</a>
+        <a href={withBase('/search')} class="error-page__ghost">Search archive</a>
+      </div>
     </div>
   </div>
 </BaseLayout>

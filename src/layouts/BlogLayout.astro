@@ -1,9 +1,14 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
 import BaseLayout from './BaseLayout.astro';
 import ReadingProgress from '@components/ReadingProgress.astro';
 import TableOfContents from '@components/TableOfContents.astro';
 import AuthorBio from '@components/AuthorBio.astro';
+import NewsletterSignup from '@components/NewsletterSignup.astro';
+import SocialShare from '@components/SocialShare.astro';
+import RelatedPosts from '@components/RelatedPosts.astro';
+import { withBase } from '@utils/base-path';
 
 interface Props {
   post: CollectionEntry<'blog'>;
@@ -27,9 +32,25 @@ const updatedFormatted = updatedDate
     }).format(updatedDate)
   : null;
 
-const base = import.meta.env.BASE_URL;
-const siteUrl = Astro.site?.origin ?? 'https://oberonlai.github.io';
+const siteUrl = Astro.site ? Astro.site.origin : 'https://tsubaki.codotx.com';
 const postUrl = new URL(Astro.url.pathname, siteUrl).href;
+const wordCount = post.body.split(/\s+/u).filter(Boolean).length;
+const readingTime = Math.max(1, Math.round(wordCount / 220));
+
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+const relatedPosts = allPosts
+  .filter((entry) => entry.id !== post.id)
+  .map((entry) => {
+    const sharedTags = entry.data.tags.filter((tag) => tags.includes(tag)).length;
+    return {
+      entry,
+      score: sharedTags * 10 + (entry.data.author === author ? 2 : 0),
+    };
+  })
+  .filter(({ score }) => score > 0)
+  .sort((left, right) => right.score - left.score || right.entry.data.date.valueOf() - left.entry.data.date.valueOf())
+  .slice(0, 3)
+  .map(({ entry }) => entry);
 
 const articleSchema = JSON.stringify({
   '@context': 'https://schema.org',
@@ -60,13 +81,13 @@ const articleSchema = JSON.stringify({
 
   <div class="container">
     <div class="post-layout">
-      <article class="post-content">
+      <article class="post-content" data-kanji="帖">
         <header class="post-header">
           <div class="post-header__eyebrow">
             {tags.length > 0 && (
               <div class="post-header__tags">
                 {tags.map((tag) => (
-                  <a href={`${base}/tags/${tag}`} class="post-header__tag">{tag}</a>
+                  <a href={withBase(`/tags/${tag}`)} class="post-header__tag">{tag}</a>
                 ))}
               </div>
             )}
@@ -81,6 +102,12 @@ const articleSchema = JSON.stringify({
           <h1 class="post-header__title hero-title reveal">{title}</h1>
 
           <p class="post-header__description reveal">{description}</p>
+
+          <div class="post-header__meta reveal">
+            <span>{readingTime} min read</span>
+            <span>{wordCount.toLocaleString()} words</span>
+            <span>{author}</span>
+          </div>
 
           {image && (
             <img
@@ -98,7 +125,17 @@ const articleSchema = JSON.stringify({
           <slot />
         </div>
 
+        <div class="post-utility-grid reveal">
+          <SocialShare title={title} url={postUrl} />
+          <NewsletterSignup
+            compact={true}
+            title="Keep the next essay within reach"
+            description="Get new articles and product notes when they are published."
+          />
+        </div>
+
         <AuthorBio author={author} />
+        <RelatedPosts posts={relatedPosts} />
       </article>
 
       <aside class="post-sidebar">
@@ -106,13 +143,67 @@ const articleSchema = JSON.stringify({
       </aside>
     </div>
   </div>
+
+  <div class="image-lightbox" id="image-lightbox" hidden>
+    <button class="image-lightbox__close" id="image-lightbox-close" type="button" aria-label="Close image viewer">
+      Close
+    </button>
+    <img id="image-lightbox-image" alt="" />
+  </div>
 </BaseLayout>
 
 <script>
   import { splitReveal, scrollReveal } from '@utils/animations';
 
+  function initPostEnhancements(): void {
+    const lightbox = document.getElementById('image-lightbox');
+    const lightboxImage = document.getElementById('image-lightbox-image') as HTMLImageElement | null;
+    const closeButton = document.getElementById('image-lightbox-close');
+
+    function closeLightbox(): void {
+      if (!(lightbox instanceof HTMLElement) || lightboxImage === null) {
+        return;
+      }
+      lightbox.hidden = true;
+      lightboxImage.src = '';
+      lightboxImage.alt = '';
+      document.body.style.overflow = '';
+    }
+
+    if (lightbox instanceof HTMLElement && lightboxImage !== null) {
+      document.querySelectorAll<HTMLImageElement>('.prose img').forEach((image) => {
+        if (image.dataset.lightboxBound === 'true') {
+          return;
+        }
+
+        image.dataset.lightboxBound = 'true';
+        image.classList.add('prose__zoomable');
+        image.addEventListener('click', () => {
+          lightbox.hidden = false;
+          lightboxImage.src = image.currentSrc || image.src;
+          lightboxImage.alt = image.alt;
+          document.body.style.overflow = 'hidden';
+        });
+      });
+
+      lightbox.addEventListener('click', (event) => {
+        if (event.target === lightbox) {
+          closeLightbox();
+        }
+      });
+
+      closeButton?.addEventListener('click', closeLightbox);
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          closeLightbox();
+        }
+      });
+    }
+  }
+
   document.addEventListener('astro:page-load', async () => {
     await splitReveal({ targets: '.hero-title', type: 'words', duration: 0.7, stagger: 0.06 });
     await scrollReveal({ targets: '.reveal', stagger: 0.12 });
+    initPostEnhancements();
   });
 </script>

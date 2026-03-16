@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '@layouts/BaseLayout.astro';
 import BlogGrid from '@components/BlogGrid.astro';
+import { withBase } from '@utils/base-path';
 
 export async function getStaticPaths() {
   const allPosts = await getCollection('blog', ({ data }) => !data.draft);
@@ -21,29 +22,31 @@ export async function getStaticPaths() {
 }
 
 const { tag, posts } = Astro.props;
-const base = import.meta.env.BASE_URL;
 ---
 
 <BaseLayout
   title={`#${tag} — Tsubaki`}
   description={`All posts tagged with "${tag}" on the Tsubaki blog.`}
 >
-  <div class="container section">
-    <div style="margin-bottom: var(--space-6);">
-      <a
-        href={`${base}/tags`}
-        style="font-size: var(--text-sm); color: var(--color-muted); text-decoration: none; display: inline-flex; align-items: center; gap: var(--space-2);"
-      >
-        &larr; All Tags
-      </a>
-    </div>
-
-    <header class="section-header reveal">
-      <h1 class="section-title">#{tag}</h1>
-      <span style="font-size: var(--text-sm); color: var(--color-muted);">
-        {posts.length} {posts.length === 1 ? 'post' : 'posts'}
-      </span>
-    </header>
+  <div class="container">
+    <section class="page-hero reveal" data-kanji="標">
+      <div class="page-hero__grid">
+        <div>
+          <p class="page-hero__eyebrow">Tag archive</p>
+          <h1 class="page-hero__title">#{tag}</h1>
+          <p class="page-hero__description">
+            A focused trail through the journal. Use this tag archive to stay on one
+            theme instead of reading the publication chronologically.
+          </p>
+        </div>
+        <div class="page-hero__meta">
+          <div class="page-hero__stat">
+            {posts.length} {posts.length === 1 ? 'post' : 'posts'}
+          </div>
+          <a href={withBase('/tags')} class="hero__secondary">&larr; All tags</a>
+        </div>
+      </div>
+    </section>
 
     {posts.length > 0 ? (
       <BlogGrid posts={posts} />

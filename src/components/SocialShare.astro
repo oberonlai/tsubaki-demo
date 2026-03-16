@@ -1,0 +1,62 @@
+---
+interface Props {
+  title: string;
+  url: string;
+}
+
+const { title, url } = Astro.props;
+const encodedTitle = encodeURIComponent(title);
+const encodedUrl = encodeURIComponent(url);
+---
+
+<section class="share-panel" aria-label="Share this post">
+  <p class="share-panel__title">Share</p>
+  <div class="share-panel__actions">
+    <a
+      class="share-panel__link"
+      href={`https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}`}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      X
+    </a>
+    <a
+      class="share-panel__link"
+      href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      LinkedIn
+    </a>
+    <button type="button" class="share-panel__link" data-copy-link={url}>
+      Copy Link
+    </button>
+  </div>
+</section>
+
+<script>
+  function initShareCopy(): void {
+    document.querySelectorAll<HTMLButtonElement>('[data-copy-link]').forEach((button) => {
+      if (button.dataset.bound === 'true') {
+        return;
+      }
+
+      button.dataset.bound = 'true';
+      button.addEventListener('click', async () => {
+        const url = button.dataset.copyLink;
+        if (!url) {
+          return;
+        }
+
+        await navigator.clipboard.writeText(url);
+        const previous = button.textContent;
+        button.textContent = 'Copied';
+        window.setTimeout(() => {
+          button.textContent = previous;
+        }, 1600);
+      });
+    });
+  }
+
+  document.addEventListener('astro:page-load', initShareCopy);
+</script>

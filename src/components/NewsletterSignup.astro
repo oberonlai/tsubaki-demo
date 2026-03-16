@@ -1,0 +1,63 @@
+---
+interface Props {
+  compact?: boolean;
+  title?: string;
+  description?: string;
+}
+
+const {
+  compact = false,
+  title = 'Join the quiet dispatch',
+  description = 'Monthly notes on editorial design systems, Astro craftsmanship, and premium theme releases.',
+} = Astro.props;
+---
+
+<section class:list={['newsletter-panel', compact && 'newsletter-panel--compact', 'reveal']} aria-label="Newsletter signup">
+  <div class="newsletter-panel__copy">
+    <p class="newsletter-panel__eyebrow">Seasonal Letters</p>
+    <h2 class="newsletter-panel__title">{title}</h2>
+    <p class="newsletter-panel__description">{description}</p>
+  </div>
+
+  <form class="newsletter-panel__form" data-newsletter-form>
+    <label class="sr-only" for="newsletter-email">Email address</label>
+    <input
+      id="newsletter-email"
+      name="email"
+      type="email"
+      class="newsletter-panel__input"
+      placeholder="you@example.com"
+      autocomplete="email"
+      required
+    />
+    <button type="submit" class="newsletter-panel__button">Subscribe</button>
+    <p class="newsletter-panel__fineprint">
+      No spam. One thoughtful note when there is something worth sending.
+    </p>
+    <p class="newsletter-panel__success" data-newsletter-success hidden>
+      You are on the list. The next issue will arrive quietly.
+    </p>
+  </form>
+</section>
+
+<script>
+  function initNewsletterForms(): void {
+    document.querySelectorAll<HTMLElement>('[data-newsletter-form]').forEach((form) => {
+      if (form.dataset.bound === 'true') {
+        return;
+      }
+
+      form.dataset.bound = 'true';
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const success = form.querySelector<HTMLElement>('[data-newsletter-success]');
+        if (success) {
+          success.hidden = false;
+        }
+        (form as HTMLFormElement).reset();
+      });
+    });
+  }
+
+  document.addEventListener('astro:page-load', initNewsletterForms);
+</script>

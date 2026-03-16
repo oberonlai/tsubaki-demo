@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
+import NewsletterSignup from '@components/NewsletterSignup.astro';
 ---
 
 <BaseLayout
@@ -7,63 +8,75 @@ import BaseLayout from '@layouts/BaseLayout.astro';
   description="Learn about the Tsubaki blog theme — our philosophy, team, and mission to make the web more beautiful and performant."
 >
   <div class="container">
-    <!-- About hero -->
-    <section class="about-hero">
-      <span class="accent-line" aria-hidden="true"></span>
-      <h1 class="hero-title reveal" style="font-family: var(--font-heading); font-size: clamp(var(--text-4xl), 7vw, var(--text-6xl)); font-weight: 900; line-height: 1.1; margin-bottom: var(--space-6);">
-        About Tsubaki
-      </h1>
-      <p class="about-section__text reveal">
-        Tsubaki (椿) — the Japanese Camellia — is a symbol of understated beauty,
-        perseverance, and elegance. This theme embodies those qualities: clean lines,
-        purposeful space, and animations that enhance rather than distract.
-      </p>
+    <section class="page-hero reveal" data-kanji="椿">
+      <div class="page-hero__grid">
+        <div>
+          <p class="page-hero__eyebrow">About</p>
+          <h1 class="page-hero__title hero-title">A camellia-colored editorial system.</h1>
+          <p class="page-hero__description">
+            Tsubaki treats the blog as a designed room, not a stack of templates.
+            The reading experience is guided by Ma, deliberate spacing, and typography
+            with enough character to hold silence as well as language.
+          </p>
+        </div>
+        <div class="page-hero__meta">
+          <div class="page-hero__stat">Japanese print influence without museum stiffness</div>
+          <div class="page-hero__stat">Astro performance with a premium editorial shell</div>
+        </div>
+      </div>
     </section>
 
-    <!-- Mission -->
-    <section class="about-section">
-      <h2 class="about-section__title reveal">Our Mission</h2>
-      <p class="about-section__text reveal">
-        We believe great design and great performance are not in conflict. Tsubaki
-        targets 95+ Lighthouse scores while delivering a reading experience that
-        feels effortlessly premium. Every design decision — from the washi-paper
-        cream background to the camellia-red accent — is intentional.
-      </p>
+    <section class="about-grid reveal">
+      <article class="about-panel">
+        <h2 class="about-panel__title">What it is for</h2>
+        <p class="about-panel__body">
+          Premium themes should feel composed before they feel feature-rich.
+          Tsubaki starts with rhythm, contrast, and restraint, then adds practical
+          utilities such as search, reading time, a persistent table of contents,
+          and shareable article layouts.
+        </p>
+      </article>
+      <article class="about-panel">
+        <h2 class="about-panel__title">Design language</h2>
+        <p class="about-panel__body">
+          The palette stays warm and mineral, with camellia red reserved for
+          moments of intent. Mincho headings hold ceremony; gothic body text keeps
+          the reading pace contemporary. Motion behaves like a page turn, not a product demo.
+        </p>
+      </article>
     </section>
 
-    <!-- Philosophy -->
-    <section class="about-section">
-      <h2 class="about-section__title reveal">Design Philosophy</h2>
-      <p class="about-section__text reveal">
-        Japanese editorial design has long valued the beauty of negative space
-        and typographic hierarchy. Tsubaki applies these principles to the web:
-        sharp corners (no border-radius), high-contrast typography with Playfair
-        Display, and GSAP animations that reveal content rather than obscure it.
-      </p>
-      <p class="about-section__text reveal" style="margin-top: var(--space-4);">
-        The result is a theme that respects the reader's attention — content-first,
-        always.
-      </p>
-    </section>
-
-    <!-- Technology -->
-    <section class="about-section">
-      <h2 class="about-section__title reveal">Built With</h2>
-      <ul class="reveal" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: var(--space-4); list-style: none; margin-top: var(--space-6);">
+    <section class="section">
+      <div class="page-hero reveal" data-kanji="工">
+        <div class="page-hero__grid">
+          <div>
+            <p class="page-hero__eyebrow">Built with care</p>
+            <h2 class="page-hero__title">The reading shell is as considered as the articles inside it.</h2>
+          </div>
+          <div class="page-hero__meta">
+            <div class="page-hero__stat">Studios, solo writers, and product teams are the natural fit.</div>
+          </div>
+        </div>
+        <ul class="about-tech-list reveal">
         {[
           { name: 'Astro', desc: 'Static site framework' },
           { name: 'GSAP', desc: 'Animation engine' },
           { name: 'MDX', desc: 'Enhanced Markdown' },
           { name: 'TypeScript', desc: 'Type safety' },
           { name: 'View Transitions', desc: 'SPA-style routing' },
-          { name: 'Playfair Display', desc: 'Heading typeface' },
+          { name: 'Shippori + Zen Kaku', desc: 'Japanese type pairing' },
         ].map(({ name, desc }) => (
-          <li style="padding: var(--space-5); background: var(--color-surface);">
-            <strong style="display: block; font-family: var(--font-heading); font-size: var(--text-lg); margin-bottom: var(--space-1);">{name}</strong>
-            <span style="font-size: var(--text-sm); color: var(--color-muted);">{desc}</span>
+          <li class="about-tech-card">
+            <strong>{name}</strong>
+            <span>{desc}</span>
           </li>
         ))}
-      </ul>
+        </ul>
+      </div>
+    </section>
+
+    <section class="about-section">
+      <NewsletterSignup compact={true} />
     </section>
   </div>
 </BaseLayout>
