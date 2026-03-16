@@ -8,6 +8,7 @@ interface Props {
 }
 
 const { post, variant = 'default' } = Astro.props;
+const base = import.meta.env.BASE_URL;
 const { title, description, date, tags, author, image } = post.data;
 const slug = post.slug;
 
@@ -44,12 +45,12 @@ const cardClass = [
     {tags.length > 0 && (
       <div class="blog-card__tags">
         {tags.map((tag) => (
-          <a href={`/tags/${tag}`} class="blog-card__tag">{tag}</a>
+          <a href={`${base}/tags/${tag}`} class="blog-card__tag">{tag}</a>
         ))}
       </div>
     )}
 
-    <a href={`/blog/${slug}`} class="blog-card__title">{title}</a>
+    <a href={`${base}/blog/${slug}`} class="blog-card__title">{title}</a>
 
     <p class="blog-card__excerpt">{description}</p>
 

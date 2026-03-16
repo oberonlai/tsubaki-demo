@@ -3,7 +3,7 @@ import mdx from '@astrojs/mdx';
 import { fileURLToPath } from 'node:url';
 
 export default defineConfig({
-  site: 'https://oberonlai.github.io/tsubaki-demo',
+  site: 'https://oberonlai.github.io',
   base: '/tsubaki-demo',
   integrations: [mdx()],
   prefetch: {

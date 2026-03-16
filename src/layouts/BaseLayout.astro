@@ -11,16 +11,19 @@ interface Props {
   canonicalUrl?: string;
 }
 
+const base = import.meta.env.BASE_URL;
+
 const {
   title,
   description,
-  image = '/og-image.png',
+  image = `${base}/og-image.png`,
   canonicalUrl,
 } = Astro.props;
 
-const siteUrl = 'https://tsubaki.codotx.com';
+const siteUrl = Astro.site?.origin ?? 'https://oberonlai.github.io';
+const siteBase = new URL(base, siteUrl).href;
 const canonical = canonicalUrl ?? new URL(Astro.url.pathname, siteUrl).href;
-const ogImage = image.startsWith('http') ? image : new URL(image, siteUrl).href;
+const ogImage = image.startsWith('http') ? image : new URL(image, siteBase).href;
 const fullTitle = title.includes('Tsubaki') ? title : `${title} — Tsubaki`;
 ---
 
@@ -50,14 +53,14 @@ const fullTitle = title.includes('Tsubaki') ? title : `${title} — Tsubaki`;
     <meta name="twitter:image" content={ogImage} />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
 
     <!-- RSS -->
     <link
       rel="alternate"
       type="application/rss+xml"
       title="Tsubaki RSS Feed"
-      href="/rss.xml"
+      href={`${base}/rss.xml`}
     />
 
     <!-- Non-render-blocking Google Fonts: Playfair Display -->
