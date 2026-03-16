@@ -21,9 +21,8 @@ const {
 } = Astro.props;
 
 const siteUrl = Astro.site?.origin ?? 'https://oberonlai.github.io';
-const siteBase = new URL(base, siteUrl).href;
 const canonical = canonicalUrl ?? new URL(Astro.url.pathname, siteUrl).href;
-const ogImage = image.startsWith('http') ? image : new URL(image, siteBase).href;
+const ogImage = image.startsWith('http') ? image : new URL(image, siteUrl).href;
 const fullTitle = title.includes('Tsubaki') ? title : `${title} — Tsubaki`;
 ---
 

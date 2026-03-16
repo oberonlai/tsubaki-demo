@@ -4,7 +4,6 @@ interface Props {
 }
 
 const { tags } = Astro.props;
-const base = import.meta.env.BASE_URL;
 
 // Scale font size between 0.8rem and 1.2rem based on count.
 const maxCount = Math.max(...tags.map((t) => t.count), 1);
@@ -20,6 +19,8 @@ function getFontSize(count: number): string {
 
   return `${size.toFixed(2)}rem`;
 }
+
+const base = import.meta.env.BASE_URL;
 ---
 
 <div class="tag-cloud" role="list">

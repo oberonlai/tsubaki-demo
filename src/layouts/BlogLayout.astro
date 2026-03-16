@@ -12,7 +12,6 @@ interface Props {
 
 const { post, headings } = Astro.props;
 const { title, description, date, tags, author, image, updatedDate } = post.data;
-const base = import.meta.env.BASE_URL;
 
 const formattedDate = new Intl.DateTimeFormat('en-US', {
   year: 'numeric',
@@ -28,6 +27,7 @@ const updatedFormatted = updatedDate
     }).format(updatedDate)
   : null;
 
+const base = import.meta.env.BASE_URL;
 const siteUrl = Astro.site?.origin ?? 'https://oberonlai.github.io';
 const postUrl = new URL(Astro.url.pathname, siteUrl).href;
 
