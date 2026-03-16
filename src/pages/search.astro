@@ -63,6 +63,14 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
 </BaseLayout>
 
 <script>
+  import { scrollReveal } from '@utils/animations';
+
+  document.addEventListener('astro:page-load', async () => {
+    await scrollReveal({ targets: '.reveal', stagger: 0.1 });
+  });
+</script>
+
+<script>
   function initSearchPage(): void {
     const input = document.getElementById('search-input') as HTMLInputElement | null;
     const count = document.getElementById('search-count');
