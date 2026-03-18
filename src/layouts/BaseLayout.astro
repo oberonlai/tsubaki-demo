@@ -1,120 +1,111 @@
 ---
-import { ClientRouter } from 'astro:transitions';
-import Nav from '@components/Nav.astro';
-import Footer from '@components/Footer.astro';
-import { withBase } from '@utils/base-path';
-import '@styles/tsubaki.css';
+import '../styles/base.css';
+import Navigation from '../components/Navigation.astro';
+import Footer from '../components/Footer.astro';
+import LeftSidebar from '../components/LeftSidebar.astro';
+import RightSidebar from '../components/RightSidebar.astro';
+import {
+  siteName as defaultSiteName,
+  siteNameEn,
+  navLinks as defaultNavLinks,
+  footerNavLinks,
+  socialLinks,
+  latestNewsDate,
+  latestNewsTitle,
+} from '../data/site';
 
 interface Props {
   title: string;
-  description: string;
-  image?: string;
-  canonicalUrl?: string;
+  description?: string;
+  siteName?: string;
+  ogImage?: string;
 }
 
 const {
   title,
-  description,
-  image = withBase('/og-image.png'),
-  canonicalUrl,
+  description = '',
+  siteName = defaultSiteName,
+  ogImage = '',
 } = Astro.props;
 
-const siteUrl = Astro.site ? Astro.site.origin : 'https://tsubaki.codotx.com';
-const canonical = canonicalUrl ?? new URL(Astro.url.pathname, siteUrl).href;
-const ogImage = image.startsWith('http') ? image : new URL(image, siteUrl).href;
-const fullTitle = title.includes('Tsubaki') ? title : `${title} — Tsubaki`;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+const currentDate = new Date().toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'numeric',
+  day: 'numeric',
+  weekday: 'short',
+}).replace(/\//g, '.');
 ---
 
 <!doctype html>
-<html lang="en" data-theme="light">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="generator" content={Astro.generator} />
+    <link rel="canonical" href={canonicalURL} />
 
-    <title>{fullTitle}</title>
-    <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
+    <title>{title.includes(siteNameEn) || title.includes(siteName) ? title : `${title} — ${siteNameEn}`}</title>
+    {description && <meta name="description" content={description} />}
 
-    <!-- Open Graph -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content={canonical} />
-    <meta property="og:title" content={fullTitle} />
-    <meta property="og:description" content={description} />
-    <meta property="og:image" content={ogImage} />
-    <meta property="og:site_name" content="Tsubaki" />
+    <meta property="og:title" content={title} />
+    {description && <meta property="og:description" content={description} />}
+    <meta property="og:url" content={canonicalURL} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
 
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={fullTitle} />
-    <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={ogImage} />
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href={withBase('/favicon.svg')} />
-
-    <!-- RSS -->
-    <link
-      rel="alternate"
-      type="application/rss+xml"
-      title="Tsubaki RSS Feed"
-      href={withBase('/rss.xml')}
-    />
-
-    <slot name="head" />
-
-    <!-- Non-render-blocking Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      rel="preload"
-      as="style"
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Shippori+Mincho+B1:wght@500;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap"
-    />
-    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Noto+Sans+JP:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap"
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Shippori+Mincho+B1:wght@500;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap"
-      media="print"
-      onload="this.media='all'"
     />
-    <noscript>
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Shippori+Mincho+B1:wght@500;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap"
-      />
-    </noscript>
-
-    <ClientRouter />
   </head>
-  <body transition:animate="fade">
-    <Nav />
-    <main>
-      <slot />
-    </main>
-    <Footer />
+  <body>
+    <LeftSidebar
+      currentDate={currentDate}
+      latestNewsDate={latestNewsDate}
+      latestNewsTitle={latestNewsTitle}
+    />
+    <RightSidebar socialLinks={socialLinks} />
+    <Navigation siteName={siteName} links={defaultNavLinks} />
 
-    <!-- Theme persistence: runs before first paint and after View Transition swaps to avoid flash -->
-    <script is:inline>
-      (function () {
-        function applyTheme() {
-          var stored = localStorage.getItem('tsubaki-theme');
-          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-          var theme = stored !== null ? stored : (prefersDark ? 'dark' : 'light');
-          document.documentElement.setAttribute('data-theme', theme);
-        }
-        applyTheme();
-        document.documentElement.classList.add('js-ready');
-        document.addEventListener('astro:after-swap', function () {
-          applyTheme();
-          document.documentElement.classList.add('js-ready');
-        });
-      })();
-    </script>
+    <div class="site-wrapper">
+      <main>
+        <slot />
+      </main>
+      <Footer
+        siteName={siteName}
+        navLinks={footerNavLinks}
+        socialLinks={socialLinks}
+        copyrightYear={new Date().getFullYear()}
+      />
+    </div>
 
-    <!-- Page transition animations -->
     <script>
-      import { initAnimations } from '@scripts/animations';
-      initAnimations();
+      function initScrollReveal() {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.16 },
+        );
+
+        document.querySelectorAll('[data-reveal]').forEach((el, i) => {
+          el.style.transitionDelay = `${(i % 5) * 0.08}s`;
+          observer.observe(el);
+        });
+      }
+
+      document.addEventListener('astro:page-load', initScrollReveal);
+      document.addEventListener('astro:after-swap', initScrollReveal);
+      initScrollReveal();
     </script>
   </body>
 </html>

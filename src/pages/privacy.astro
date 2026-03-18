@@ -1,0 +1,64 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Privacy Policy — Tsubaki" description="Privacy policy for Tsubaki.">
+  <section class="section">
+    <div class="container">
+      <div class="privacy-content">
+        <h1 class="privacy-title">Privacy Policy</h1>
+        <p class="privacy-body">
+          Tsubaki (hereinafter "we" or "our organization") considers the protection of personal information an important responsibility and handles personal data appropriately in accordance with the following privacy policy.
+        </p>
+        <h2 class="privacy-h2">Collection of Personal Information</h2>
+        <p class="privacy-body">
+          We may collect personal information such as your name, email address, and phone number through our contact form and newsletter subscriptions.
+        </p>
+        <h2 class="privacy-h2">Purpose of Use</h2>
+        <p class="privacy-body">
+          Personal information collected is used for responding to inquiries, providing information about events and services, and other necessary communications.
+        </p>
+        <h2 class="privacy-h2">Disclosure to Third Parties</h2>
+        <p class="privacy-body">
+          We will not provide personal information to third parties without the individual's consent, except as required by law.
+        </p>
+        <h2 class="privacy-h2">Contact</h2>
+        <p class="privacy-body">
+          For inquiries regarding the handling of personal information, please reach out through our contact form.
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .privacy-content {
+    max-width: 680px;
+    margin-inline: auto;
+    padding-top: var(--space-lg);
+  }
+
+  .privacy-title {
+    font-family: var(--font-serif-jp);
+    font-size: var(--text-h1);
+    font-weight: 700;
+    color: var(--color-ink);
+    margin-bottom: 32px;
+  }
+
+  .privacy-h2 {
+    font-family: var(--font-serif-jp);
+    font-size: var(--text-h3);
+    font-weight: 600;
+    color: var(--color-ink);
+    margin-top: 40px;
+    margin-bottom: 12px;
+  }
+
+  .privacy-body {
+    font-family: var(--font-sans-jp);
+    font-size: var(--text-body);
+    color: var(--color-ink-mid);
+    line-height: var(--lh-lead);
+  }
+</style>

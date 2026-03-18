@@ -1,0 +1,75 @@
+---
+/**
+ * Fixed side strips — 32px wide, position fixed on both sides.
+ * Left: rotated ticker with date + latest post title.
+ * Right: rotated date + social icon links.
+ */
+interface Props {
+  currentDate?: string;
+  latestPost?: string;
+}
+
+const { currentDate = '', latestPost = '' } = Astro.props;
+const dateDisplay = currentDate || new Date().toLocaleDateString('ja-JP', {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+});
+---
+
+<!-- Left strip: news ticker -->
+<aside class="side-strip side-strip--left" aria-label="Latest update">
+  <span class="side-strip__text">
+    {latestPost ? `News ─ ${dateDisplay} ─ ${latestPost}` : `Tsubaki ─ ${dateDisplay}`}
+  </span>
+</aside>
+
+<!-- Right strip: date + social -->
+<aside class="side-strip side-strip--right" aria-label="Date and social links">
+  <span class="side-strip__text">{dateDisplay}</span>
+</aside>
+
+<style>
+  .side-strip {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: var(--layout-strip-width);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 900;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .side-strip--left {
+    left: 0;
+  }
+
+  .side-strip--right {
+    right: 0;
+  }
+
+  .side-strip__text {
+    font-size: var(--text-caption);
+    letter-spacing: var(--ls-tight);
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+    display: block;
+  }
+
+  .side-strip--left .side-strip__text {
+    transform: rotate(-90deg);
+  }
+
+  .side-strip--right .side-strip__text {
+    transform: rotate(90deg);
+  }
+
+  @media (max-width: 768px) {
+    .side-strip {
+      display: none;
+    }
+  }
+</style>

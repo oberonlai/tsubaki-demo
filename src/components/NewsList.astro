@@ -1,0 +1,92 @@
+---
+interface Item {
+  id: string;
+  data: {
+    title: string;
+    date: Date;
+  };
+}
+
+interface Props {
+  items: Item[];
+}
+
+const { items } = Astro.props;
+
+function withBase(path: string): string {
+  const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+  return path === '/' ? `${base}/` : `${base}/${path.replace(/^\//, '')}`;
+}
+
+function formatDate(date: Date): string {
+  return `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}`;
+}
+---
+
+<div class="news-stack">
+  <div class="news-stack__rule" aria-hidden="true"></div>
+  {items.map((item) => (
+    <article class="news-stack__item">
+      <a href={withBase(`/news/${item.id}`)} class="news-stack__link">
+        <time class="news-stack__date" datetime={item.data.date.toISOString()}>{formatDate(item.data.date)}</time>
+        <span class="news-stack__title">{item.data.title}</span>
+        <span class="news-stack__arrow" aria-hidden="true">→</span>
+      </a>
+      <div class="news-stack__rule" aria-hidden="true"></div>
+    </article>
+  ))}
+</div>
+
+<style>
+  .news-stack__rule {
+    height: 1px;
+    background: var(--color-rule);
+  }
+
+  .news-stack__link {
+    display: grid;
+    grid-template-columns: minmax(5.75rem, 7.5rem) 1fr minmax(1rem, 2rem);
+    gap: 1rem;
+    align-items: baseline;
+    padding: 1.55rem 0;
+    transition: color var(--transition-fast);
+  }
+
+  .news-stack__date {
+    font-size: var(--text-sm);
+    color: var(--color-ink-light);
+  }
+
+  .news-stack__title {
+    font-size: clamp(1.05rem, 2vw, 1.35rem);
+    line-height: 1.65;
+  }
+
+  .news-stack__arrow {
+    text-align: right;
+    color: var(--color-gold);
+    transition: transform var(--transition-fast);
+  }
+
+  .news-stack__link:hover .news-stack__title,
+  .news-stack__link:focus-visible .news-stack__title {
+    color: var(--color-gold);
+  }
+
+  .news-stack__link:hover .news-stack__arrow,
+  .news-stack__link:focus-visible .news-stack__arrow {
+    transform: translateX(0.18rem);
+  }
+
+  @media (max-width: 720px) {
+    .news-stack__link {
+      grid-template-columns: 1fr auto;
+      gap: 0.5rem 1rem;
+      align-items: start;
+    }
+
+    .news-stack__date {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

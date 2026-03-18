@@ -1,0 +1,54 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import NewsList from '../../components/NewsList.astro';
+import PageHero from '../../components/PageHero.astro';
+
+const newsItems = (await getCollection('news'))
+  .filter((item) => !item.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<BaseLayout title="News — Tsubaki" description="Latest news and announcements from Tsubaki.">
+  <PageHero image="/images/news-hero.jpg" alt="Community scenery" overline="Announcements" title="News" />
+
+  <section class="news-header section">
+    <div class="container">
+      <div class="news-header__inner">
+        <div class="section-header" data-reveal>
+          <span class="section-overline">Announcements</span>
+          <h1 class="section-title">Long-form notices, launch updates, and seasonal programmes</h1>
+        </div>
+        <p class="editorial-copy" data-reveal>The list uses rule-separated rows instead of cards so the archive feels closer to a printed bulletin. Dates stay quiet; titles carry the emphasis.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="news-list-section">
+    <div class="container">
+      <div data-reveal>
+        <NewsList items={newsItems} />
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .news-header__inner {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(1.5rem, 4vw, 4rem);
+    align-items: start;
+  }
+
+  .news-list-section {
+    padding-top: 0;
+    padding-bottom: var(--space-2xl);
+  }
+
+  @media (max-width: 768px) {
+    .news-header__inner {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

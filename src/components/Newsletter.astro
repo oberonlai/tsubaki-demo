@@ -1,0 +1,175 @@
+---
+/**
+ * Newsletter signup section with bilingual heading and gold arrow CTA.
+ */
+interface Props {
+  endpoint?: string;
+}
+
+const { endpoint = '/api/newsletter' } = Astro.props;
+---
+
+<section class="newsletter-section" aria-labelledby="newsletter-heading">
+  <div class="newsletter-card">
+    <div class="section-heading">
+      <h2 id="newsletter-heading">
+        <span class="heading-ja">Newsletter</span>
+        <span class="heading-en">Newsletter</span>
+      </h2>
+    </div>
+    <p class="newsletter-description">
+      Stay updated with our latest articles and announcements.
+    </p>
+    <form
+      class="newsletter-form"
+      data-endpoint={endpoint}
+      novalidate
+    >
+      <div class="newsletter-form__group">
+        <label for="newsletter-email" class="sr-only">Email address</label>
+        <input
+          type="email"
+          id="newsletter-email"
+          name="email"
+          class="newsletter-input"
+          placeholder="your@email.com"
+          required
+          autocomplete="email"
+        />
+        <button type="submit" class="newsletter-submit view-more-link" aria-label="Subscribe to newsletter">
+          <span class="link-text">Subscribe</span>
+          <span class="arrow-circle" aria-hidden="true">→</span>
+        </button>
+      </div>
+      <div class="newsletter-message" role="status" aria-live="polite" hidden></div>
+    </form>
+  </div>
+</section>
+
+<style>
+  .newsletter-section {
+    padding-block: var(--space-10);
+  }
+
+  .newsletter-card {
+    background-color: var(--color-bg-surface);
+    padding: var(--space-10);
+    max-width: 560px;
+    margin-inline: auto;
+    border-radius: var(--radius-sm);
+    border: var(--border-default);
+  }
+
+  .newsletter-description {
+    font-size: var(--text-body);
+    color: var(--color-text-secondary);
+    line-height: var(--lh-body);
+    letter-spacing: var(--ls-base);
+    margin-bottom: var(--space-5);
+  }
+
+  .newsletter-form__group {
+    display: flex;
+    gap: var(--space-4);
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .newsletter-input {
+    flex: 1;
+    min-width: 0;
+    height: 48px;
+    background-color: var(--color-bg-input);
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    padding: 0 var(--space-4);
+    font-family: var(--font-primary);
+    font-size: var(--text-body);
+    letter-spacing: var(--ls-base);
+    color: var(--color-text-primary);
+    transition: border-color var(--transition-base);
+    outline: none;
+  }
+
+  .newsletter-input:focus {
+    border-color: var(--color-accent);
+  }
+
+  .newsletter-input::placeholder {
+    color: var(--color-text-secondary);
+  }
+
+  .newsletter-submit {
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: var(--font-primary);
+    white-space: nowrap;
+  }
+
+  .newsletter-message {
+    margin-top: var(--space-3);
+    font-size: var(--text-caption);
+    letter-spacing: var(--ls-base);
+    color: var(--color-text-secondary);
+  }
+
+  .newsletter-message.is-success {
+    color: var(--color-accent-dark);
+  }
+
+  .newsletter-message.is-error {
+    color: var(--color-required);
+  }
+
+  /* Screen reader only utility. */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+</style>
+
+<script>
+  const form = document.querySelector('.newsletter-form') as HTMLFormElement | null;
+  if (form) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const message = form.querySelector('.newsletter-message') as HTMLElement | null;
+      const emailInput = form.querySelector<HTMLInputElement>('[name="email"]');
+      const endpoint = form.dataset.endpoint ?? '/api/newsletter';
+      if (!emailInput || !message) return;
+      if (!emailInput.validity.valid) {
+        message.removeAttribute('hidden');
+        message.classList.add('is-error');
+        message.classList.remove('is-success');
+        message.textContent = 'Please enter a valid email address.';
+        return;
+      }
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: emailInput.value }),
+        });
+        if (!res.ok) throw new Error('Request failed.');
+        message.removeAttribute('hidden');
+        message.classList.add('is-success');
+        message.classList.remove('is-error');
+        message.textContent = 'Thank you for subscribing!';
+        emailInput.value = '';
+      } catch {
+        message.removeAttribute('hidden');
+        message.classList.add('is-error');
+        message.classList.remove('is-success');
+        message.textContent = 'An error occurred. Please try again later.';
+      }
+    });
+  }
+</script>

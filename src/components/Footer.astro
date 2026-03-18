@@ -1,24 +1,169 @@
 ---
-import { withBase } from '@utils/base-path';
+interface NavLink {
+  label: string;
+  href: string;
+}
 
-const year = new Date().getFullYear();
+interface SocialLink {
+  label: string;
+  href: string;
+  icon: string;
+}
+
+interface Props {
+  siteName?: string;
+  navLinks?: NavLink[];
+  socialLinks?: SocialLink[];
+  copyrightYear?: number;
+}
+
+const {
+  siteName = '椿',
+  navLinks = [],
+  socialLinks = [],
+  copyrightYear = new Date().getFullYear(),
+} = Astro.props;
+
+function withBase(path: string): string {
+  if (/^(?:[a-z]+:)?\/\//i.test(path)) return path;
+  const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+  return path === '/' ? `${base}/` : `${base}/${path.replace(/^\//, '')}`;
+}
 ---
 
-<footer class="footer">
-  <div class="container footer__inner">
-    <div class="footer__brand">
-      <span class="section-kicker">Closing notes</span>
-      <p class="footer__title">Tsubaki</p>
-      <p class="footer__text">
-        A premium Astro journal theme composed like a print folio: deliberate pacing,
-        asymmetry, and motion that feels ceremonial instead of synthetic.
-      </p>
+<footer class="site-footer" role="contentinfo">
+  <div class="footer-inner container">
+    <div class="footer-brand-col">
+      <a href={withBase('/')} class="footer-brand" aria-label={siteName}>
+        <div class="footer-brand__kanji">
+          <span>椿</span>
+          <span>Tsubaki Street Notes</span>
+        </div>
+        <div class="footer-brand__accent" aria-hidden="true"></div>
+      </a>
+      <p class="footer-tagline">An editorial storefront for neighbourhood stories, notices, and community membership.</p>
+      <p class="footer-copyright">&copy; {copyrightYear} {siteName}</p>
     </div>
-    <nav class="footer__links" aria-label="Footer navigation">
-      <a href={withBase('/rss.xml')} class="footer__link">RSS</a>
-      <a href={withBase('/sitemap-index.xml')} class="footer__link">Sitemap</a>
-      <a href={withBase('/about')} class="footer__link">About</a>
-      <a href="https://astro.build" class="footer__link" target="_blank" rel="noopener noreferrer">Built on Astro</a>
-    </nav>
+
+    {navLinks.length > 0 && (
+      <nav class="footer-nav" aria-label="Footer navigation">
+        {navLinks.map((link) => (
+          <a href={withBase(link.href)} class="footer-nav-link">{link.label}</a>
+        ))}
+      </nav>
+    )}
+
+    <div class="footer-social-col">
+      {socialLinks.length > 0 && (
+        <div class="footer-social">
+          {socialLinks.map((link) => (
+            <a
+              href={link.href}
+              class="footer-social-link"
+              aria-label={link.label}
+              target={link.href.startsWith('http') ? '_blank' : undefined}
+              rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+            >
+              {link.label}
+            </a>
+          ))}
+        </div>
+      )}
+      <a href={withBase('/privacy')} class="footer-privacy">Privacy Policy</a>
+    </div>
   </div>
 </footer>
+
+<style>
+  .site-footer {
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--color-cream-dark) 72%, transparent), var(--color-cream-dark)),
+      var(--color-cream-dark);
+    padding-block: 48px;
+  }
+
+  .footer-inner {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+
+  .footer-brand {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    color: var(--color-ink);
+    margin-bottom: 16px;
+  }
+
+  .footer-brand__kanji {
+    display: grid;
+    line-height: 1.1;
+  }
+
+  .footer-brand__kanji span:first-child {
+    font-family: var(--font-serif-jp);
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+  }
+
+  .footer-brand__kanji span:last-child {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    line-height: 1;
+  }
+
+  .footer-brand__accent {
+    width: 28px;
+    height: 18px;
+    background-color: var(--color-gold);
+    clip-path: polygon(0 100%, 100% 0, 100% 100%);
+    margin-bottom: 2px;
+  }
+
+  .footer-tagline {
+    font-size: var(--text-sm);
+    color: var(--color-ink-mid);
+    max-width: 26rem;
+    margin-bottom: 16px;
+  }
+
+  .footer-copyright,
+  .footer-privacy {
+    font-size: var(--text-xs);
+    color: var(--color-ink-light);
+  }
+
+  .footer-nav,
+  .footer-social {
+    display: grid;
+    gap: 12px;
+  }
+
+  .footer-nav-link,
+  .footer-social-link {
+    font-size: var(--text-sm);
+    color: var(--color-ink-mid);
+    transition: color var(--transition-fast);
+  }
+
+  .footer-nav-link:hover,
+  .footer-social-link:hover,
+  .footer-privacy:hover {
+    color: var(--color-ink);
+  }
+
+  .footer-social-col {
+    display: grid;
+    gap: 12px;
+    align-items: start;
+  }
+
+  @media (max-width: 768px) {
+    .footer-inner {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

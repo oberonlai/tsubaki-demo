@@ -1,0 +1,351 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import FaqAccordion from '../components/FaqAccordion.astro';
+
+function withBase(path: string): string {
+  const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+  return path === '/' ? `${base}/` : `${base}/${path.replace(/^\//, '')}`;
+}
+
+const benefits = [
+  {
+    title: 'Stay up to date with the latest',
+    description: 'Receive the latest event announcements, promotions, and new store openings delivered straight to you.',
+    image: '/images/benefit-1.jpg',
+  },
+  {
+    title: 'Member-exclusive perks and discounts',
+    description: 'Enjoy exclusive coupons and special offers at participating stores, available only to members.',
+    image: '/images/benefit-2.jpg',
+  },
+  {
+    title: 'Join the community',
+    description: 'Connect with fellow enthusiasts and participate in revitalizing the local community.',
+    image: '/images/benefit-3.jpg',
+  },
+];
+
+const faqs = [
+  {
+    question: 'How do I join the membership?',
+    answer: 'Simply click the subscribe button to sign up. After registering, you will automatically receive a membership guide.',
+  },
+  {
+    question: 'Can I join from outside the local area?',
+    answer: 'Absolutely. Anyone who wishes to support our community is welcome to join, regardless of location.',
+  },
+  {
+    question: 'Are there any membership requirements?',
+    answer: 'There are no special requirements. Anyone aged 18 or above is welcome to participate.',
+  },
+  {
+    question: 'Is there a minimum membership period?',
+    answer: 'There is no minimum commitment. You are free to cancel your membership at any time.',
+  },
+  {
+    question: 'How do I cancel my membership?',
+    answer: 'You can complete the cancellation process through your account settings. Please refer to the guide sent after registration for details.',
+  },
+  {
+    question: 'Where can I find details about the member benefits?',
+    answer: 'After subscribing, we will send you a detailed guide outlining all available benefits. You can also browse a list of participating stores within your account.',
+  },
+];
+---
+
+<BaseLayout title="Gather What You Love — Tsubaki" description="The Tsubaki community support program 'Gather What You Love.' Subscribe and join the local community.">
+  <section class="project-hero">
+    <div class="project-hero__inner container">
+      <div class="project-hero__left">
+        <div class="project-hero__image">
+          <img src={withBase('/images/project-hand.jpg')} alt="Gather What You Love" width="600" height="700" loading="eager" decoding="async" />
+        </div>
+        <p class="project-hero__catchcopy">Why not become part of our community?</p>
+      </div>
+
+      <div class="project-hero__right">
+        <div class="project-hero__program-label">
+          <span>Membership programme</span>
+          <span>Konokoto</span>
+        </div>
+
+        <h1 class="project-hero__title">
+          <span>この好き</span>
+          <span>とまれ</span>
+        </h1>
+        <p class="project-hero__subtitle">Project</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="intro-section section">
+    <div class="container">
+      <div class="intro-inner" data-reveal>
+        <span class="intro-location">Fukushima Prefecture Fukushima City</span>
+        <p class="intro-text">Tsubaki is a community rooted in history, creativity, and the warm connections between local people. Over the years, a rich culture has been cultivated here.</p>
+        <p class="intro-text">The "Gather What You Love" project is a community where those who cherish this place come together to share its unique appeal. Your favorite spots, your favorite shops, your favorite experiences. We invite you to share them all with us.</p>
+        <p class="intro-text">When small passions come together, they become a powerful force. That is the vision behind the project.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="benefits-section section section--cream-dark">
+    <div class="container">
+      <span class="section-overline" data-reveal>Member benefits</span>
+      <h2 class="benefits-heading" data-reveal>What membership gives back to the street</h2>
+
+      <div class="benefits-grid">
+        {benefits.map((benefit) => (
+          <div class="benefit-card" data-reveal>
+            <div class="benefit-card__image">
+              <img src={withBase(benefit.image)} alt={benefit.title} width="300" height="200" loading="lazy" decoding="async" />
+            </div>
+            <h3 class="benefit-card__title">{benefit.title}</h3>
+            <p class="benefit-card__desc">{benefit.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="fee-section section">
+    <div class="container">
+      <div class="fee-inner" data-reveal>
+        <span class="section-overline">Membership fee</span>
+        <h2 class="fee-heading">Join for free</h2>
+        <p class="fee-body">Participation in the project is completely free. Simply subscribe to join the community right away.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="steps-section section">
+    <div class="container">
+      <span class="section-overline" data-reveal>How to join</span>
+      <div class="steps-grid" data-reveal>
+        <div class="step">
+          <span class="step__number" aria-hidden="true">01</span>
+          <h3 class="step__title">Subscribe</h3>
+          <p class="step__desc">Click the button below to subscribe to our official account.</p>
+        </div>
+        <div class="step-arrow" aria-hidden="true">→</div>
+        <div class="step">
+          <span class="step__number" aria-hidden="true">02</span>
+          <h3 class="step__title">Register membership</h3>
+          <p class="step__desc">Follow the guide to complete your membership registration.</p>
+        </div>
+        <div class="step-arrow" aria-hidden="true">→</div>
+        <div class="step">
+          <span class="step__number" aria-hidden="true">03</span>
+          <h3 class="step__title">Join the community</h3>
+          <p class="step__desc">Join the open community chat and connect with fellow members.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="line-cta-section section section--cream-dark">
+    <div class="container">
+      <div class="line-cta" data-reveal>
+        <h2 class="line-cta__heading">Subscribe now</h2>
+        <a href="#" class="line-cta__button" target="_blank" rel="noopener noreferrer">Add on LINE</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq-section section">
+    <div class="container">
+      <div class="faq-header">
+        <span class="section-overline" data-reveal>Frequently asked questions</span>
+        <h2 class="section-title" data-reveal>FAQ</h2>
+      </div>
+      <div data-reveal>
+        <FaqAccordion items={faqs} />
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .project-hero {
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+  }
+
+  .project-hero__inner {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    align-items: center;
+    min-height: 90vh;
+    padding-block: var(--space-xl);
+  }
+
+  .project-hero__left {
+    position: relative;
+  }
+
+  .project-hero__image img {
+    width: 100%;
+    height: 600px;
+    object-fit: cover;
+  }
+
+  .project-hero__catchcopy {
+    position: absolute;
+    bottom: 40px;
+    left: 0;
+    padding: 16px;
+    background-color: rgba(243, 240, 234, 0.85);
+  }
+
+  .project-hero__right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-left: 40px;
+    gap: 24px;
+  }
+
+  .project-hero__program-label {
+    text-align: center;
+    color: var(--color-ink-light);
+    line-height: 2;
+  }
+
+  .project-hero__program-label span {
+    display: block;
+  }
+
+  .project-hero__title {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    font-size: clamp(3rem, 6vw, var(--text-display));
+    line-height: 1.1;
+    display: flex;
+    gap: 8px;
+  }
+
+  .project-hero__subtitle {
+    font-family: var(--font-display);
+    letter-spacing: var(--ls-wider);
+    text-transform: uppercase;
+    color: var(--color-ink-light);
+  }
+
+  .intro-inner,
+  .fee-inner {
+    max-width: 640px;
+  }
+
+  .intro-location {
+    display: block;
+    font-size: var(--text-xs);
+    color: var(--color-ink-light);
+    letter-spacing: var(--ls-widest);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  .intro-text + .intro-text,
+  .fee-body {
+    margin-top: 1rem;
+  }
+
+  .benefits-heading {
+    font-size: var(--text-h2);
+    line-height: 1.2;
+    margin-bottom: 40px;
+  }
+
+  .benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+
+  .benefit-card__image {
+    margin-bottom: 16px;
+  }
+
+  .benefit-card__image img {
+    width: 100%;
+    aspect-ratio: 1.25;
+    object-fit: cover;
+  }
+
+  .benefit-card__title {
+    margin-bottom: 8px;
+  }
+
+  .benefit-card__desc {
+    color: var(--color-ink-mid);
+  }
+
+  .fee-heading,
+  .line-cta__heading {
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.05;
+  }
+
+  .steps-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto 1fr;
+    gap: 16px;
+    align-items: center;
+    margin-top: 24px;
+  }
+
+  .step {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .step__number {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    color: var(--color-rule);
+  }
+
+  .step-arrow {
+    color: var(--color-gold);
+    font-size: 2rem;
+  }
+
+  .line-cta {
+    display: grid;
+    justify-items: center;
+    gap: 1rem;
+  }
+
+  .line-cta__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #06C755;
+    color: white;
+    padding: 16px 48px;
+  }
+
+  .faq-header {
+    margin-bottom: 1.5rem;
+  }
+
+  @media (max-width: 900px) {
+    .project-hero__inner,
+    .benefits-grid,
+    .steps-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .project-hero__right {
+      padding-left: 0;
+      padding-top: 2rem;
+    }
+
+    .step-arrow {
+      transform: rotate(90deg);
+      justify-self: start;
+    }
+  }
+</style>

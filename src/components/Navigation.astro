@@ -1,0 +1,309 @@
+---
+interface NavLink {
+  label: string;
+  href: string;
+}
+
+interface Props {
+  siteName?: string;
+  links?: NavLink[];
+}
+
+const { siteName = '椿', links = [] } = Astro.props;
+const currentPath = normalizePath(Astro.url.pathname);
+
+function withBase(href: string): string {
+  if (/^(?:[a-z]+:)?\/\//i.test(href) || href.startsWith('#')) return href;
+  const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+  return href === '/' ? `${base}/` : `${base}/${href.replace(/^\//, '')}`;
+}
+
+function normalizePath(path: string): string {
+  if (!path || path === '/') return '/';
+  return path.replace(/\/+$/, '') || '/';
+}
+
+function isActive(href: string): boolean {
+  const target = normalizePath(withBase(href));
+  return currentPath === normalizePath(target) || currentPath.startsWith(`${normalizePath(target)}/`);
+}
+---
+
+<header class="site-nav" id="site-nav" role="banner">
+  <div class="site-nav__inner container">
+    <a href={withBase('/')} class="site-nav__brand" aria-label={siteName}>
+      <span class="brand-vertical" aria-hidden="true">椿</span>
+      <span class="brand-copy">
+        <span class="brand-copy__eyebrow">Fukushima City</span>
+        <span class="brand-copy__name">Tsubaki Street Notes</span>
+      </span>
+      <div class="brand-accent" aria-hidden="true"></div>
+    </a>
+
+    <nav class="site-nav__links" aria-label="Main navigation">
+      {links.map((link) => (
+        <a
+          href={withBase(link.href)}
+          class:list={['nav-link', isActive(link.href) && 'is-active']}
+          aria-current={isActive(link.href) ? 'page' : undefined}
+        >
+          {link.label}
+        </a>
+      ))}
+    </nav>
+
+    <div class="site-nav__actions">
+      <a href={withBase('/contact')} class="nav-cta">Inquire</a>
+      <button
+        type="button"
+        class="mobile-menu-toggle"
+        id="mobile-menu-toggle"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        aria-label="Open menu"
+      >
+        <span class="hamburger"></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="mobile-menu" id="mobile-menu" aria-hidden="true" role="dialog" aria-label="Mobile navigation">
+  <button type="button" class="mobile-menu__close" id="mobile-menu-close" aria-label="Close">✕</button>
+  <nav class="mobile-menu__nav" aria-label="Mobile navigation">
+    {links.map((link) => (
+      <a
+        href={withBase(link.href)}
+        class:list={['mobile-nav-link', isActive(link.href) && 'is-active']}
+        aria-current={isActive(link.href) ? 'page' : undefined}
+      >
+        {link.label}
+      </a>
+    ))}
+    <a href={withBase('/contact')} class="mobile-nav-link">Contact</a>
+  </nav>
+</div>
+
+<script>
+  const menu = document.getElementById('mobile-menu');
+  const toggle = document.getElementById('mobile-menu-toggle');
+  const closeButton = document.getElementById('mobile-menu-close');
+
+  function setMenu(open) {
+    if (!menu || !toggle) return;
+    menu.classList.toggle('is-open', open);
+    menu.setAttribute('aria-hidden', String(!open));
+    toggle.setAttribute('aria-expanded', String(open));
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+
+  toggle?.addEventListener('click', () => setMenu(true));
+  closeButton?.addEventListener('click', () => setMenu(false));
+  menu?.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => setMenu(false)));
+  document.addEventListener('astro:after-swap', () => setMenu(false));
+</script>
+
+<style>
+  .site-nav {
+    position: fixed;
+    top: 0;
+    left: var(--layout-sidebar-left);
+    right: var(--layout-sidebar-right);
+    height: var(--layout-nav-height);
+    z-index: 100;
+    background: color-mix(in srgb, var(--color-cream) 92%, transparent);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-rule) 70%, transparent);
+  }
+
+  .site-nav__inner {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .site-nav__brand {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.8rem;
+    color: var(--color-ink);
+    flex-shrink: 0;
+  }
+
+  .brand-vertical {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    font-family: var(--font-serif-jp);
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+  }
+
+  .brand-copy {
+    display: grid;
+    gap: 0.08rem;
+  }
+
+  .brand-copy__eyebrow {
+    font-family: var(--font-sans-jp);
+    font-size: 0.58rem;
+    font-weight: 400;
+    color: var(--color-ink-light);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  .brand-copy__name {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 500;
+    line-height: 1;
+  }
+
+  .brand-accent {
+    width: 1.9rem;
+    height: 1.15rem;
+    background-color: var(--color-gold);
+    clip-path: polygon(0 100%, 100% 0, 100% 100%);
+    flex-shrink: 0;
+    margin-bottom: 0.15rem;
+  }
+
+  .site-nav__links {
+    display: flex;
+    align-items: center;
+    gap: clamp(1rem, 2vw, 2.5rem);
+  }
+
+  .nav-link,
+  .nav-cta {
+    font-family: var(--font-sans-jp);
+    font-size: var(--text-sm);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-ink-mid);
+    transition: color var(--transition-fast);
+  }
+
+  .nav-link:hover,
+  .nav-link.is-active,
+  .nav-cta:hover {
+    color: var(--color-ink);
+  }
+
+  .nav-cta::after {
+    content: ' →';
+    color: var(--color-gold);
+  }
+
+  .mobile-menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    padding: 0.5rem;
+    color: var(--color-ink);
+  }
+
+  .hamburger,
+  .hamburger::before,
+  .hamburger::after {
+    display: block;
+    width: 24px;
+    height: 1px;
+    background-color: var(--color-ink);
+    transition: transform var(--transition-base), opacity var(--transition-base);
+  }
+
+  .hamburger {
+    position: relative;
+  }
+
+  .hamburger::before,
+  .hamburger::after {
+    content: '';
+    position: absolute;
+    left: 0;
+  }
+
+  .hamburger::before {
+    top: -6px;
+  }
+
+  .hamburger::after {
+    top: 6px;
+  }
+
+  .mobile-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 1100;
+    background:
+      radial-gradient(circle at top, color-mix(in srgb, var(--color-gold) 14%, transparent), transparent 38%),
+      var(--color-cream);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-slow);
+  }
+
+  .mobile-menu.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .mobile-menu__close {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--color-ink);
+  }
+
+  .mobile-menu__nav {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.1rem;
+  }
+
+  .mobile-nav-link {
+    font-family: var(--font-display);
+    font-size: clamp(2.1rem, 7vw, 3.2rem);
+    color: var(--color-ink);
+    line-height: 1;
+  }
+
+  .mobile-nav-link.is-active {
+    color: var(--color-gold);
+  }
+
+  @media (max-width: 1024px) {
+    .site-nav {
+      left: 0;
+      right: 0;
+    }
+
+    .site-nav__links,
+    .nav-cta {
+      display: none;
+    }
+
+    .mobile-menu-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .brand-copy__name {
+      font-size: 1rem;
+    }
+  }
+</style>

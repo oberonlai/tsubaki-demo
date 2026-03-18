@@ -1,91 +1,242 @@
 ---
-import BaseLayout from '@layouts/BaseLayout.astro';
-import NewsletterSignup from '@components/NewsletterSignup.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+
+function withBase(path: string): string {
+  const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+  return path === '/' ? `${base}/` : `${base}/${path.replace(/^\//, '')}`;
+}
+
+const stores = [
+  { name: 'Yamada Coffee', category: 'Cafe', description: 'A heritage coffee house operating since the early 1930s. Serving freshly roasted, house-blend coffee.', web: '#', ig: '#' },
+  { name: 'Sato Books', category: 'Books', description: 'A beloved neighborhood bookstore for over 50 years, featuring a curated section of local authors.', web: '#', ig: '#' },
+  { name: 'Suzuki Diner', category: 'Dining', description: 'Known for set meals made with locally sourced ingredients. Expect a lunchtime queue.', web: '#', ig: '#' },
+  { name: 'Kotori Flowers', category: 'Florist', description: 'A flower shop that handles seasonal blooms with care. Perfect for gifts.', web: '#', ig: '#' },
+  { name: 'Midori Boutique', category: 'Fashion', description: 'A locally rooted fashion shop. Also offers garment alterations and tailoring.', web: '#', ig: '#' },
+  { name: 'Tanaka Pharmacy', category: 'Pharmacy', description: 'A trusted neighborhood pharmacy since 1955. Friendly consultations always available.', web: '#', ig: '#' },
+];
 ---
 
-<BaseLayout
-  title="About — Tsubaki"
-  description="Learn about the Tsubaki blog theme — our philosophy, team, and mission to make the web more beautiful and performant."
->
-  <div class="container">
-    <section class="page-hero reveal" data-kanji="椿">
-      <div class="page-hero__grid">
-        <div>
-          <p class="page-hero__eyebrow">About</p>
-          <h1 class="page-hero__title hero-title">A camellia-colored editorial system.</h1>
-          <p class="page-hero__description">
-            Tsubaki treats the blog as a designed room, not a stack of templates.
-            The reading experience is guided by Ma, deliberate spacing, and typography
-            with enough character to hold silence as well as language.
-          </p>
+<BaseLayout title="About — Tsubaki" description="About Tsubaki. Discover the history of our community and the participating stores.">
+  <PageHero image="/images/about-hero.jpg" alt="Street view" overline="About us" title="About" />
+
+  <section class="philosophy-section section">
+    <div class="container">
+      <div class="philosophy-intro">
+        <div class="section-header" data-reveal>
+          <span class="section-overline">Philosophy</span>
+          <h2 class="section-title">A calm street with a long memory</h2>
         </div>
-        <div class="page-hero__meta">
-          <div class="page-hero__stat">Japanese print influence without museum stiffness</div>
-          <div class="page-hero__stat">Astro performance with a premium editorial shell</div>
+        <div class="editorial-copy" data-reveal>
+          <p>Tsubaki exists for local organisations and businesses that want to communicate with the same care they put into their storefronts. The layout borrows from signboards, programme leaflets, and editorial pages rather than modern app dashboards.</p>
+          <p>That means restrained colour, clear hierarchy, and copy blocks that breathe. The tone is warm and collected, never loud.</p>
         </div>
       </div>
-    </section>
 
-    <section class="about-grid reveal">
-      <article class="about-panel">
-        <h2 class="about-panel__title">What it is for</h2>
-        <p class="about-panel__body">
-          Premium themes should feel composed before they feel feature-rich.
-          Tsubaki starts with rhythm, contrast, and restraint, then adds practical
-          utilities such as search, reading time, a persistent table of contents,
-          and shareable article layouts.
-        </p>
-      </article>
-      <article class="about-panel">
-        <h2 class="about-panel__title">Design language</h2>
-        <p class="about-panel__body">
-          The palette stays warm and mineral, with camellia red reserved for
-          moments of intent. Mincho headings hold ceremony; gothic body text keeps
-          the reading pace contemporary. Motion behaves like a page turn, not a product demo.
-        </p>
-      </article>
-    </section>
-
-    <section class="section">
-      <div class="page-hero reveal" data-kanji="工">
-        <div class="page-hero__grid">
-          <div>
-            <p class="page-hero__eyebrow">Built with care</p>
-            <h2 class="page-hero__title">The reading shell is as considered as the articles inside it.</h2>
-          </div>
-          <div class="page-hero__meta">
-            <div class="page-hero__stat">Studios, solo writers, and product teams are the natural fit.</div>
-          </div>
+      <div class="philosophy-grid">
+        <figure class="philosophy-grid__image" data-reveal>
+          <img src={withBase('/images/about-main.jpg')} alt="Local storefront with window display" width="720" height="920" loading="lazy" decoding="async" />
+        </figure>
+        <div class="philosophy-inner" data-reveal>
+          <p class="philosophy-text">Tsubaki is a community with a rich history, situated at the heart of its neighborhood. Through generations, it has stood alongside the lives of local people, supporting their everyday rhythms.</p>
+          <p class="philosophy-text">From long-established institutions to young proprietors charting new territory, our community is home to a diverse range of personalities and stories. The unique narrative of each shop and the warm relationships with visitors are what make this place truly special.</p>
+          <p class="philosophy-text">As a gathering place where people meet, converse, and forge new connections, Tsubaki will continue to evolve. We are certain you will find something here to love.</p>
+          <p class="philosophy-text">With every visit, we hope you discover small joys woven into the fabric of everyday life.</p>
         </div>
-        <ul class="about-tech-list reveal">
-        {[
-          { name: 'Astro', desc: 'Static site framework' },
-          { name: 'GSAP', desc: 'Animation engine' },
-          { name: 'MDX', desc: 'Enhanced Markdown' },
-          { name: 'TypeScript', desc: 'Type safety' },
-          { name: 'View Transitions', desc: 'SPA-style routing' },
-          { name: 'Shippori + Zen Kaku', desc: 'Japanese type pairing' },
-        ].map(({ name, desc }) => (
-          <li class="about-tech-card">
-            <strong>{name}</strong>
-            <span>{desc}</span>
-          </li>
+      </div>
+    </div>
+  </section>
+
+  <section class="stores-section section">
+    <div class="container">
+      <div class="stores-header">
+        <div class="section-header" data-reveal>
+          <span class="section-overline">Participating stores</span>
+          <h2 class="section-title">A mix of old hands and newer voices</h2>
+        </div>
+        <p class="editorial-copy" data-reveal>Each listing is treated as a slim editorial strip rather than a boxed card: image, category, description, and direct links in a single airy column.</p>
+      </div>
+
+      <div class="stores-grid">
+        {stores.map((store) => (
+          <article class="store-card" data-reveal>
+            <div class="store-card__photo">
+              <img src={withBase('/images/store-placeholder.jpg')} alt={store.name} width="400" height="300" loading="lazy" decoding="async" />
+            </div>
+            <div class="store-card__body">
+              <span class="store-card__category">{store.category}</span>
+              <h3 class="store-card__name">{store.name}</h3>
+              <p class="store-card__desc">{store.description}</p>
+              <div class="store-card__links">
+                <a href={store.web} class="store-card__link" aria-label={`${store.name} Website`} target="_blank" rel="noopener noreferrer">Website</a>
+                <a href={store.ig} class="store-card__link" aria-label={`${store.name} Instagram`} target="_blank" rel="noopener noreferrer">Instagram</a>
+              </div>
+            </div>
+          </article>
         ))}
-        </ul>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="about-section">
-      <NewsletterSignup compact={true} />
-    </section>
-  </div>
+  <section class="join-section section section--cream-dark">
+    <div class="container">
+      <div class="join-inner" data-reveal>
+        <span class="section-overline">Join our association</span>
+        <h2 class="join-heading">Help us build a vibrant community</h2>
+        <p class="join-body">We welcome shops and individuals who share our goal of revitalizing the local community. Please do not hesitate to reach out for more information.</p>
+        <p class="join-body">Whether you are considering opening a new shop, participating in events, or joining the community, we offer a variety of ways to get involved.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="logo-section section">
+    <div class="container">
+      <div class="logo-inner" data-reveal>
+        <span class="section-overline">About the logo</span>
+        <div class="logo-display">
+          <div class="logo-mark" aria-label="Tsubaki logo">
+            <span class="logo-mark__kanji">椿</span>
+            <div class="logo-mark__accent" aria-hidden="true"></div>
+          </div>
+          <p class="logo-desc">The Tsubaki logo is a design that symbolizes local culture and history. The warm gold accent represents the bonds between community members and the radiance of the neighborhood. The vertical lettering pays homage to the tradition of Japanese signboard culture.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 </BaseLayout>
 
-<script>
-  import { splitReveal, scrollReveal } from '@utils/animations';
+<style>
+  .philosophy-intro,
+  .stores-header {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(1.5rem, 4vw, 4rem);
+    margin-bottom: 3rem;
+    align-items: start;
+  }
 
-  document.addEventListener('astro:page-load', async () => {
-    await splitReveal({ targets: '.hero-title', type: 'words', duration: 0.7, stagger: 0.06 });
-    await scrollReveal({ targets: '.reveal', stagger: 0.1 });
-  });
-</script>
+  .philosophy-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+    gap: clamp(1.5rem, 4vw, 4rem);
+    align-items: start;
+  }
+
+  .philosophy-grid__image img {
+    width: 100%;
+    aspect-ratio: 0.85;
+    object-fit: cover;
+  }
+
+  .philosophy-text {
+    font-size: var(--text-body-lg);
+    line-height: var(--lh-lead);
+    margin-bottom: 1rem;
+  }
+
+  .stores-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+  }
+
+  .store-card {
+    display: grid;
+    align-content: start;
+  }
+
+  .store-card__photo {
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+
+  .store-card__photo img {
+    width: 100%;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+  }
+
+  .store-card__category {
+    display: inline-block;
+    font-size: var(--text-xs);
+    color: var(--color-ink-light);
+    letter-spacing: var(--ls-wider);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .store-card__name {
+    font-size: var(--text-h3);
+    margin-bottom: 8px;
+  }
+
+  .store-card__desc {
+    color: var(--color-ink-mid);
+    margin-bottom: 1rem;
+  }
+
+  .store-card__links {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .store-card__link {
+    font-size: var(--text-sm);
+    color: var(--color-gold);
+  }
+
+  .join-inner {
+    max-width: 42rem;
+  }
+
+  .join-heading {
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.05;
+    margin-bottom: 1rem;
+  }
+
+  .join-body + .join-body {
+    margin-top: 0.9rem;
+  }
+
+  .logo-display {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 32px;
+    align-items: center;
+    margin-top: 24px;
+  }
+
+  .logo-mark {
+    display: grid;
+    justify-items: start;
+    gap: 0.6rem;
+  }
+
+  .logo-mark__kanji {
+    font-family: var(--font-serif-jp);
+    font-size: 3rem;
+    letter-spacing: 0.18em;
+  }
+
+  .logo-mark__accent {
+    width: 3rem;
+    height: 1.4rem;
+    background: var(--color-gold);
+    clip-path: polygon(0 100%, 100% 0, 100% 100%);
+  }
+
+  .logo-desc {
+    color: var(--color-ink-mid);
+  }
+
+  @media (max-width: 960px) {
+    .philosophy-intro,
+    .philosophy-grid,
+    .stores-header,
+    .stores-grid,
+    .logo-display {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

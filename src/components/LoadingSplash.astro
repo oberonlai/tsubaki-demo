@@ -1,0 +1,70 @@
+---
+/**
+ * Loading splash screen — full-screen overlay shown on first visit.
+ * Skipped on repeat visits via sessionStorage flag.
+ */
+---
+
+<div id="loading-splash" class="loading-splash" aria-hidden="true">
+  <div class="loading-splash__inner">
+    <svg class="loading-splash__logo" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Tsubaki">
+      <text x="50%" y="60%" dominant-baseline="middle" text-anchor="middle"
+        font-family="'Zen Kaku Gothic New', sans-serif"
+        font-size="48" font-weight="500" fill="#2A2A2A" letter-spacing="0.1em">椿</text>
+    </svg>
+  </div>
+</div>
+
+<style>
+  .loading-splash {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background-color: var(--color-bg-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  .loading-splash__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+  }
+
+  .loading-splash__logo {
+    width: 80px;
+    height: 80px;
+  }
+</style>
+
+<script>
+  const splash = document.getElementById('loading-splash');
+  if (splash) {
+    const seen = sessionStorage.getItem('tsubaki-splash-seen');
+    if (seen) {
+      splash.style.display = 'none';
+    } else {
+      /* Fade in → hold → fade out sequence. */
+      splash.style.opacity = '0';
+      splash.style.transition = 'opacity 0.4s ease';
+
+      requestAnimationFrame(() => {
+        splash.style.opacity = '1';
+        setTimeout(() => {
+          splash.style.opacity = '0';
+          splash.addEventListener(
+            'transitionend',
+            () => {
+              splash.style.display = 'none';
+              sessionStorage.setItem('tsubaki-splash-seen', '1');
+            },
+            { once: true },
+          );
+        }, 1200);
+      });
+    }
+  }
+</script>

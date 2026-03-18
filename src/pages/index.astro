@@ -1,108 +1,250 @@
 ---
 import { getCollection } from 'astro:content';
-import BaseLayout from '@layouts/BaseLayout.astro';
-import BlogGrid from '@components/BlogGrid.astro';
-import NewsletterSignup from '@components/NewsletterSignup.astro';
-import { withBase } from '@utils/base-path';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import NewsList from '../components/NewsList.astro';
+import { siteDescription } from '../data/site';
 
-const allPosts = await getCollection('blog', ({ data }) => !data.draft);
-const sortedPosts = allPosts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
-const featuredPosts = sortedPosts.slice(0, 3);
-const latestPost = sortedPosts[0];
-const journalStats = [
-  { value: '95+', label: 'Lighthouse target' },
-  { value: 'Ma', label: 'Space as composition' },
-  { value: '3', label: 'Lead essays this issue' },
-];
+const newsItems = (await getCollection('news'))
+  .filter((item) => !item.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 4);
+
+function withBase(path: string): string {
+  const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+  return path === '/' ? `${base}/` : `${base}/${path.replace(/^\//, '')}`;
+}
 ---
 
-<BaseLayout
-  title="Tsubaki — Japanese-Inspired Blog Theme"
-  description="A minimal, performant blog theme built with Astro. Sharp editorial design, buttery-smooth GSAP animations, and 95+ Lighthouse scores."
->
+<BaseLayout title="Tsubaki" description={siteDescription}>
   <section class="hero">
-    <div class="container hero__grid">
-      <div class="hero__copy" style="position: relative;" data-kanji="椿">
-        <span class="hero__eyebrow">Issue No. 01</span>
-        <h1 class="hero__title hero-title">A blog theme designed like a keepsake object.</h1>
-        <p class="hero__subtitle reveal">
-          Tsubaki turns publishing into ceremony. The layout layers paper tones,
-          vertical rhythm, and camellia-red precision so every article feels
-          collected rather than dumped into a template.
-        </p>
-        <div class="hero__actions reveal">
-          <a href={withBase('/blog')} class="hero__cta">Open the journal</a>
-          <a href={withBase('/search')} class="hero__secondary">Search the archive</a>
+    <div class="hero__panels">
+      <figure class="hero__panel hero__panel--primary">
+        <img src={withBase('/images/hero-left.jpg')} alt="Street landscape" width="900" height="1100" loading="eager" decoding="async" />
+      </figure>
+      <figure class="hero__panel hero__panel--secondary">
+        <img src={withBase('/images/hero-right.jpg')} alt="Residents gathering beside a storefront" width="760" height="960" loading="eager" decoding="async" />
+      </figure>
+    </div>
+    <div class="hero__copy" data-reveal>
+      <span class="kicker">Neighbourhood journal</span>
+      <p>Stories from the arcade, quiet notices from the street, and a community project built around the shops people return to again and again.</p>
+      <a href={withBase('/about')} class="view-more">Read our story →</a>
+    </div>
+    <div class="hero__vertical" aria-hidden="true">
+      <span>椿</span>
+      <span>TSUBAKI</span>
+      <span>Street Notes</span>
+    </div>
+  </section>
+
+  <section class="section intro-band">
+    <div class="container">
+      <div class="intro-band__layout">
+        <div class="section-header" data-reveal>
+          <span class="section-overline">About</span>
+          <h2 class="section-title">A street assembled through memory</h2>
         </div>
-      </div>
-
-      <div class="hero__panel reveal">
-        <p class="hero__panel-title">This issue</p>
-        <ul class="hero__principles" role="list">
-          <li>Paper-toned surfaces with disciplined red accents</li>
-          <li>Asymmetry used to guide attention, not create noise</li>
-          <li>Scroll reveals paced like page turns</li>
-        </ul>
-
-        <div class="hero__metrics">
-          {journalStats.map((item) => (
-            <div class="hero__metric">
-              <span class="hero__metric-value">{item.value}</span>
-              <span class="hero__metric-label">{item.label}</span>
-            </div>
-          ))}
+        <div class="editorial-copy" data-reveal>
+          <p>Tsubaki treats local news like an editorial object: measured spacing, long reading lines, and photography that leaves room for atmosphere instead of boxes and chrome.</p>
+          <p>The theme is aimed at local associations, cultural programmes, and neighbourhood businesses that need to feel refined before they ever feel “tech”.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="section">
+  <section class="section feature-grid surface-panel">
     <div class="container">
-      <header class="section-header reveal">
-        <div>
-          <p class="section-kicker">Lead essays</p>
-          <h2 class="section-title">Latest posts</h2>
-        </div>
-        <a href={withBase('/blog')} class="section-link">View full archive &rarr;</a>
-      </header>
-
-      <BlogGrid posts={featuredPosts} />
+      <div class="feature-grid__layout">
+        <article class="feature-grid__statement" data-reveal>
+          <span class="section-overline">Konokoto project</span>
+          <h2>Gather what you love and turn it into membership.</h2>
+          <p>We frame the programme as a calm, premium invitation instead of a promo block: benefits, joining steps, and FAQ all sit inside one editorial rhythm.</p>
+          <a href={withBase('/project')} class="view-more">See the programme →</a>
+        </article>
+        <figure class="feature-grid__image" data-reveal>
+          <img src={withBase('/images/project-hand.jpg')} alt="Illustrated hand holding a flower" width="700" height="920" loading="lazy" decoding="async" />
+        </figure>
+      </div>
     </div>
   </section>
 
-  <section class="section">
+  <section class="section gallery-ribbon">
+    <div class="gallery-ribbon__track">
+      {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+        <figure class="gallery-ribbon__card" data-reveal>
+          <img src={withBase(`/images/gallery-${i}.jpg`)} alt={`Community scene ${i}`} width="280" height="360" loading="lazy" decoding="async" />
+        </figure>
+      ))}
+    </div>
+  </section>
+
+  <section class="news-section section">
     <div class="container">
-      <div class="page-hero reveal" data-kanji="文">
-        <div class="page-hero__grid">
-          <div>
-            <p class="page-hero__eyebrow">Reading system</p>
-            <h2 class="page-hero__title">Built for writers who care how silence looks on the page.</h2>
-            <p class="page-hero__description">
-              Search, related essays, reading time, social sharing, and a persistent table of
-              contents are already composed into the shell. The utility is there, but the
-              atmosphere does most of the work.
-            </p>
-          </div>
-          <div class="page-hero__meta">
-            <div class="page-hero__stat">Includes search results, tag archive, and article lightbox.</div>
-            {latestPost && (
-              <div class="page-hero__stat">
-                Latest entry: <a href={withBase(`/blog/${latestPost.id}`)}>{latestPost.data.title}</a>
-              </div>
-            )}
-          </div>
+      <div class="news-section__header">
+        <div class="section-header" data-reveal>
+          <span class="section-overline">Announcements</span>
+          <h2 class="section-title">The latest from the street</h2>
         </div>
+        <a href={withBase('/news')} class="view-more">View More →</a>
       </div>
-      <NewsletterSignup />
+      <div data-reveal>
+        <NewsList items={newsItems} />
+      </div>
     </div>
   </section>
 </BaseLayout>
 
-<script>
-  import { splitReveal, scrollReveal } from '@utils/animations';
+<style>
+  .hero {
+    position: relative;
+    min-height: calc(100svh - var(--layout-nav-height));
+    overflow: clip;
+    padding: clamp(1.5rem, 2vw, 2.5rem);
+  }
 
-  document.addEventListener('astro:page-load', async () => {
-    await splitReveal({ targets: '.hero-title', type: 'words', duration: 0.7, stagger: 0.06 });
-    await scrollReveal({ targets: '.reveal', stagger: 0.12 });
-  });
-</script>
+  .hero__panels {
+    display: grid;
+    grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+    gap: 1rem;
+    min-height: inherit;
+  }
+
+  .hero__panel {
+    overflow: hidden;
+  }
+
+  .hero__panel img {
+    width: 100%;
+    height: 100%;
+    min-height: calc(100svh - 8rem);
+    object-fit: cover;
+  }
+
+  .hero__panel--secondary {
+    transform: translateY(3rem);
+  }
+
+  .hero__copy {
+    position: absolute;
+    left: clamp(2.5rem, 9vw, 9rem);
+    bottom: clamp(2.5rem, 8vw, 7rem);
+    z-index: 2;
+    max-width: 27rem;
+    padding: 1.5rem 1.7rem;
+    background: color-mix(in srgb, var(--color-cream) 90%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-rule) 72%, transparent);
+  }
+
+  .hero__copy p {
+    margin: 0.8rem 0 1rem;
+    color: var(--color-ink-mid);
+  }
+
+  .hero__vertical {
+    position: absolute;
+    right: clamp(1.25rem, 4vw, 4rem);
+    top: 7.5rem;
+    z-index: 3;
+    display: flex;
+    gap: 0.35rem;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    font-family: var(--font-display);
+    font-size: clamp(1.05rem, 1.7vw, 1.55rem);
+    letter-spacing: 0.24em;
+    color: var(--color-ink);
+    text-transform: uppercase;
+  }
+
+  .intro-band__layout,
+  .feature-grid__layout,
+  .news-section__header {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(1.5rem, 4vw, 4rem);
+    align-items: start;
+  }
+
+  .feature-grid__statement h2 {
+    margin-bottom: 1rem;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 600;
+    line-height: 1.05;
+  }
+
+  .feature-grid__statement p {
+    margin-bottom: 1.4rem;
+    color: var(--color-ink-mid);
+  }
+
+  .feature-grid__image img {
+    width: 100%;
+    aspect-ratio: 0.9;
+    object-fit: cover;
+  }
+
+  .gallery-ribbon {
+    padding-top: 0;
+  }
+
+  .gallery-ribbon__track {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(12rem, 17rem);
+    gap: 1rem;
+    overflow-x: auto;
+    padding: 0 clamp(1.5rem, 6vw, 5rem) 0.5rem;
+    scrollbar-width: none;
+  }
+
+  .gallery-ribbon__track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .gallery-ribbon__card img {
+    width: 100%;
+    aspect-ratio: 0.78;
+    object-fit: cover;
+  }
+
+  .news-section__header {
+    margin-bottom: 2rem;
+  }
+
+  @media (max-width: 900px) {
+    .hero__panels,
+    .intro-band__layout,
+    .feature-grid__layout,
+    .news-section__header {
+      grid-template-columns: 1fr;
+    }
+
+    .hero {
+      min-height: auto;
+    }
+
+    .hero__panel img {
+      min-height: 24rem;
+    }
+
+    .hero__panel--secondary {
+      display: none;
+    }
+
+    .hero__copy {
+      left: 1.5rem;
+      right: 1.5rem;
+      bottom: 1.5rem;
+      max-width: none;
+    }
+
+    .hero__vertical {
+      top: 1.25rem;
+      right: 1rem;
+    }
+
+    .news-section__header .view-more {
+      justify-self: start;
+    }
+  }
+</style>
