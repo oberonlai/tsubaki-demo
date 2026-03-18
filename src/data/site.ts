@@ -1,32 +1,33 @@
-/** Site-wide configuration for the Tsubaki community editorial theme. */
+/** Site-wide configuration for the Tsubaki editorial portfolio theme. */
 
-export const siteName = '椿';
+export const siteName = 'Tsubaki';
 export const siteNameEn = 'Tsubaki';
-export const siteTagline = 'Community stories, gathered with care';
-export const siteDescription = 'An editorial community theme shaped by Japanese minimalism, warm cream tones, and generous whitespace for local stories, news, and programmes.';
-export const siteLocale = 'en-US';
+export const siteTagline = 'A curated space where creativity and community meet';
+export const siteDescription = 'Tsubaki is a curated editorial space celebrating local creativity, craftsmanship, and community. Discover stories, events, and the people behind this vibrant district.';
+export const siteLocale = 'en';
 
 export const navLinks = [
   { label: 'Home', href: '/' },
   { label: 'About', href: '/about' },
-  { label: 'Konokoto', href: '/project' },
+  { label: 'Project', href: '/project' },
   { label: 'News', href: '/news' },
-  { label: 'Contact', href: '/contact' },
+  { label: 'Faq', href: '/faq' },
 ];
 
 export const footerNavLinks = [
   { label: 'Home', href: '/' },
   { label: 'About', href: '/about' },
-  { label: 'Konokoto', href: '/project' },
+  { label: 'Project', href: '/project' },
   { label: 'News', href: '/news' },
+  { label: 'Faq', href: '/faq' },
   { label: 'Contact', href: '/contact' },
-  { label: 'Privacy Policy', href: '/privacy' },
 ];
 
 export const socialLinks = [
-  { label: 'Instagram', href: 'https://www.instagram.com/', icon: 'instagram' },
   { label: 'Facebook', href: 'https://www.facebook.com/', icon: 'facebook' },
+  { label: 'Instagram', href: 'https://www.instagram.com/', icon: 'instagram' },
+  { label: 'LINE', href: 'https://line.me/', icon: 'line' },
 ];
 
 export const latestNewsDate = '2026.1.22';
-export const latestNewsTitle = 'Re Start launch event announced for the community hall.';
+export const latestNewsTitle = 'Spring Market returns to Tsubaki Square on April 5';

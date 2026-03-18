@@ -7,244 +7,749 @@ import { siteDescription } from '../data/site';
 const newsItems = (await getCollection('news'))
   .filter((item) => !item.data.draft)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0, 4);
+  .slice(0, 2);
 
 function withBase(path: string): string {
   const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   return path === '/' ? `${base}/` : `${base}/${path.replace(/^\//, '')}`;
 }
+
+const storeList = [
+  'HOTEL SANKYO FUKUSHIMA', 'Ishii Pharmacy Omachi', 'Diner Hitoto', 'pickandbarns', 'Uesugi Terrace', 'Bunkado Co., Ltd.', 'cafe nai', 'HAS A SCALE',
+  'Cosmo Dispensing Pharmacy', 'Lin Linen & Goods', 'Kotowa', 'Daisuki Okayame', 'Pâtisserie Éclore', 'BUNKADOSAUNA', 'Totalplants bloom', 'Port',
+  'Saito Watch & Clock', 'hair room metsa', 'Little Bird', 'Silk Shop Oriwori', 'Pantonote', 'LAPEL', 'Wedding Produce Chayuka', 'Indiba Salon Blue Moon',
+  'Ojima Paper & Confectionery', 'OPTICAL YABUUCHI', 'Kawara Fuku Honten', 'Daisho General Hospital', 'GOOD ONE BAGEL', 'FULLER', 'studio mysore',
+];
 ---
 
 <BaseLayout title="Tsubaki" description={siteDescription}>
-  <section class="hero">
-    <div class="hero__panels">
-      <figure class="hero__panel hero__panel--primary">
-        <img src={withBase('/images/hero-left.jpg')} alt="Street landscape" width="900" height="1100" loading="eager" decoding="async" />
-      </figure>
-      <figure class="hero__panel hero__panel--secondary">
-        <img src={withBase('/images/hero-right.jpg')} alt="Residents gathering beside a storefront" width="760" height="960" loading="eager" decoding="async" />
-      </figure>
+
+  <!-- HERO: Full-width dark street photo with text overlay -->
+  <section class="home-hero">
+    <div class="home-hero__media">
+      <img src={withBase('/images/hero-left.jpg')} alt="Tsubaki district" width="1600" height="900" loading="eager" decoding="async" data-parallax="8" />
+      <div class="home-hero__veil" aria-hidden="true"></div>
     </div>
-    <div class="hero__copy" data-reveal>
-      <span class="kicker">Neighbourhood journal</span>
-      <p>Stories from the arcade, quiet notices from the street, and a community project built around the shops people return to again and again.</p>
-      <a href={withBase('/about')} class="view-more">Read our story →</a>
-    </div>
-    <div class="hero__vertical" aria-hidden="true">
-      <span>椿</span>
-      <span>TSUBAKI</span>
-      <span>Street Notes</span>
+    <div class="home-hero__overlay" data-reveal>
+      <p class="home-hero__copy-jp">
+        Step into Tsubaki.<br />Here you will find treasured things,<br />people, and encounters with community.<br /><br />And little by little,<br />new places worth sharing<br />continue to grow.<br /><br />Tsubaki
+      </p>
     </div>
   </section>
 
-  <section class="section intro-band">
-    <div class="container">
-      <div class="intro-band__layout">
-        <div class="section-header" data-reveal>
-          <span class="section-overline">About</span>
-          <h2 class="section-title">A street assembled through memory</h2>
+  <!-- ABOUT SECTION: 2-column — label+title left, photo right -->
+  <section class="section about-section">
+    <div class="about-grid">
+      <div class="about-left" data-reveal>
+        <span class="section-overline">About Tsubaki</span>
+        <h2 class="about-title">About</h2>
+      </div>
+      <div class="about-right">
+        <div class="about-photo" data-reveal>
+          <img src={withBase('/images/about-hero.jpg')} alt="Tsubaki street view" width="760" height="960" loading="lazy" decoding="async" data-parallax="10" />
         </div>
-        <div class="editorial-copy" data-reveal>
-          <p>Tsubaki treats local news like an editorial object: measured spacing, long reading lines, and photography that leaves room for atmosphere instead of boxes and chrome.</p>
-          <p>The theme is aimed at local associations, cultural programmes, and neighbourhood businesses that need to feel refined before they ever feel “tech”.</p>
+      </div>
+    </div>
+    <div class="about-body container" data-reveal>
+      <div class="about-body__text">
+        <p>We cherish what each person loves, and we have always sought to offer things and experiences that bring genuine delight. May what we love resonate with you, adding a small but meaningful richness to your everyday life.</p>
+        <p>Today, as always, we continue to send out warm inspiration from this place — hoping to make your ordinary day a little more extraordinary.</p>
+        <a href={withBase('/about')} class="view-more-btn" data-reveal>
+          View More <span class="view-more-btn__circle" aria-hidden="true">→</span>
+        </a>
+      </div>
+      <div class="about-body__photo" data-reveal>
+        <img src={withBase('/images/about-main.jpg')} alt="Tsubaki street scene" width="680" height="840" loading="lazy" decoding="async" data-parallax="8" />
+      </div>
+    </div>
+  </section>
+
+  <!-- CINEMATIC PHOTO: Full-width wide street photo -->
+  <section class="cinematic-band">
+    <div class="cinematic-band__media">
+      <img src={withBase('/images/hero-right.jpg')} alt="Tsubaki district wide view" width="1600" height="700" loading="lazy" decoding="async" data-parallax="6" />
+    </div>
+  </section>
+
+  <!-- PROJECT SECTION: この好きとまれ collage + text -->
+  <section class="project-section section">
+    <div class="project-collage" data-reveal>
+      <!-- Scattered photos around the main hand illustration. -->
+      <figure class="project-photo project-photo--1">
+        <img src={withBase('/images/gallery-1.jpg')} alt="Local shop scene" width="280" height="360" loading="lazy" decoding="async" />
+      </figure>
+      <figure class="project-photo project-photo--2">
+        <img src={withBase('/images/gallery-2.jpg')} alt="Local craft" width="220" height="280" loading="lazy" decoding="async" />
+      </figure>
+      <figure class="project-photo project-photo--3">
+        <img src={withBase('/images/gallery-3.jpg')} alt="Community gathering" width="240" height="300" loading="lazy" decoding="async" />
+      </figure>
+      <figure class="project-photo project-photo--4">
+        <img src={withBase('/images/gallery-4.jpg')} alt="Artisan at work" width="260" height="320" loading="lazy" decoding="async" />
+      </figure>
+
+      <div class="project-main">
+        <img src={withBase('/images/project-hand.jpg')} alt="Tsubaki Project — hand illustration" width="420" height="520" loading="lazy" decoding="async" class="project-hand" />
+        <div class="project-main__text">
+          <h2 class="project-jp-title" aria-label="Tsubaki Project">
+            <span>椿</span>
+          </h2>
+          <span class="project-subtitle">Project</span>
+        </div>
+      </div>
+
+      <div class="project-badge" aria-hidden="true">
+        <span>(Tsubaki<br />Community Programme)</span>
+      </div>
+    </div>
+
+    <div class="project-body container" data-reveal>
+      <div class="project-body__inner">
+        <h3 class="project-heading">Would you like to join<br />the Tsubaki community?</h3>
+        <p>At Tsubaki, we run the community programme together with everyone who cares about this place. Your support energises the district and the people in it. Why not become part of the Tsubaki community?</p>
+        <a href={withBase('/project')} class="view-more-btn" data-reveal>
+          View More <span class="view-more-btn__circle" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="project-gallery container">
+      <div class="project-gallery__track">
+        {[5, 6, 7, 8].map((i) => (
+          <figure class="project-gallery__item" data-scale-reveal>
+            <img src={withBase(`/images/gallery-${i}.jpg`)} alt={`Scene ${i}`} width="280" height="360" loading="lazy" decoding="async" />
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- MAP SECTION: Illustrated map header + store list -->
+  <section class="map-section section">
+    <div class="container map-intro" data-reveal>
+      <span class="section-overline">Tsubaki District Map</span>
+      <h2 class="map-title">Tsubaki MAP</h2>
+      <p class="map-desc">Discover the member shops of the Tsubaki community. Use this map as your guide when you visit.<br /><small>※ Information current as of January 2026.</small></p>
+    </div>
+    <div class="map-image container" data-reveal>
+      <!-- Placeholder for illustrated hand-drawn map image. -->
+      <div class="map-placeholder" aria-label="Tsubaki district illustrated map">
+        <span>Map illustration</span>
+      </div>
+    </div>
+    <div class="map-stores container" data-reveal>
+      <ul class="store-list">
+        {storeList.map((store, i) => (
+          <li class="store-list__item">
+            <span class="store-list__num">{'⓪①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳㉑㉒㉓㉔㉕㉖㉗㉘㉙㉚㉛'.charAt(i + 1)}</span>
+            <span>{store}</span>
+          </li>
+        ))}
+      </ul>
+      <p class="map-note">※ Subject to change.</p>
+    </div>
+  </section>
+
+  <!-- ACCESS SECTION -->
+  <section class="access-section section">
+    <div class="container access-grid">
+      <div class="access-header" data-reveal>
+        <span class="section-overline">Getting Here</span>
+        <h2 class="access-title">Access</h2>
+        <a href="https://maps.google.com" class="access-map-link" target="_blank" rel="noopener noreferrer">
+          <span class="access-map-link__icon" aria-hidden="true">📍</span>
+          Google Map
+          <span class="access-map-link__btn" aria-hidden="true"></span>
+        </a>
+      </div>
+      <div class="access-info" data-reveal>
+        <div class="access-item">
+          <h3 class="access-item__title">From the nearest station</h3>
+          <p>Tsubaki district is approximately 5–6 minutes on foot from the east exit of the nearest station. Head east along the main avenue, pass the intersection, and turn right to reach the district entrance. The street is lined with cafés, restaurants, and specialty shops.</p>
+        </div>
+        <div class="access-item">
+          <h3 class="access-item__title">By car</h3>
+          <p>[From the national highway]<br />From the national highway, take the junction towards the east station area and turn right at the police station intersection to arrive.</p>
+          <p>[From the expressway]<br />Exit at the nearest interchange, follow the prefectural road, and proceed towards the east station area. Journey time is approximately 12 minutes.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="section feature-grid surface-panel">
-    <div class="container">
-      <div class="feature-grid__layout">
-        <article class="feature-grid__statement" data-reveal>
-          <span class="section-overline">Konokoto project</span>
-          <h2>Gather what you love and turn it into membership.</h2>
-          <p>We frame the programme as a calm, premium invitation instead of a promo block: benefits, joining steps, and FAQ all sit inside one editorial rhythm.</p>
-          <a href={withBase('/project')} class="view-more">See the programme →</a>
-        </article>
-        <figure class="feature-grid__image" data-reveal>
-          <img src={withBase('/images/project-hand.jpg')} alt="Illustrated hand holding a flower" width="700" height="920" loading="lazy" decoding="async" />
-        </figure>
-      </div>
-    </div>
-  </section>
-
-  <section class="section gallery-ribbon">
-    <div class="gallery-ribbon__track">
-      {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-        <figure class="gallery-ribbon__card" data-reveal>
-          <img src={withBase(`/images/gallery-${i}.jpg`)} alt={`Community scene ${i}`} width="280" height="360" loading="lazy" decoding="async" />
-        </figure>
-      ))}
-    </div>
-  </section>
-
+  <!-- NEWS SECTION: 2-column header with list -->
   <section class="news-section section">
-    <div class="container">
-      <div class="news-section__header">
-        <div class="section-header" data-reveal>
-          <span class="section-overline">Announcements</span>
-          <h2 class="section-title">The latest from the street</h2>
-        </div>
-        <a href={withBase('/news')} class="view-more">View More →</a>
+    <div class="container news-grid">
+      <div class="news-header" data-reveal>
+        <span class="section-overline">Latest</span>
+        <h2 class="news-title">News</h2>
+        <a href={withBase('/news')} class="view-more-btn">
+          View More <span class="view-more-btn__circle" aria-hidden="true">→</span>
+        </a>
       </div>
-      <div data-reveal>
+      <div class="news-body" data-reveal>
         <NewsList items={newsItems} />
       </div>
     </div>
   </section>
+
 </BaseLayout>
 
 <style>
-  .hero {
+  /* ====== HERO ====== */
+  .home-hero {
     position: relative;
-    min-height: calc(100svh - var(--layout-nav-height));
+    height: 90vh;
+    min-height: 28rem;
     overflow: clip;
-    padding: clamp(1.5rem, 2vw, 2.5rem);
   }
 
-  .hero__panels {
-    display: grid;
-    grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
-    gap: 1rem;
-    min-height: inherit;
+  .home-hero__media {
+    position: absolute;
+    inset: 0;
   }
 
-  .hero__panel {
-    overflow: hidden;
-  }
-
-  .hero__panel img {
+  .home-hero__media img {
     width: 100%;
     height: 100%;
-    min-height: calc(100svh - 8rem);
     object-fit: cover;
   }
 
-  .hero__panel--secondary {
-    transform: translateY(3rem);
-  }
-
-  .hero__copy {
+  .home-hero__veil {
     position: absolute;
-    left: clamp(2.5rem, 9vw, 9rem);
-    bottom: clamp(2.5rem, 8vw, 7rem);
-    z-index: 2;
-    max-width: 27rem;
-    padding: 1.5rem 1.7rem;
-    background: color-mix(in srgb, var(--color-cream) 90%, transparent);
-    border: 1px solid color-mix(in srgb, var(--color-rule) 72%, transparent);
+    inset: 0;
+    background: rgba(30, 25, 18, 0.55);
   }
 
-  .hero__copy p {
-    margin: 0.8rem 0 1rem;
-    color: var(--color-ink-mid);
-  }
-
-  .hero__vertical {
+  .home-hero__overlay {
     position: absolute;
-    right: clamp(1.25rem, 4vw, 4rem);
-    top: 7.5rem;
-    z-index: 3;
+    inset: 0;
     display: flex;
-    gap: 0.35rem;
-    writing-mode: vertical-rl;
-    text-orientation: mixed;
-    font-family: var(--font-display);
-    font-size: clamp(1.05rem, 1.7vw, 1.55rem);
-    letter-spacing: 0.24em;
-    color: var(--color-ink);
-    text-transform: uppercase;
+    align-items: center;
+    justify-content: center;
   }
 
-  .intro-band__layout,
-  .feature-grid__layout,
-  .news-section__header {
+  .home-hero__copy-jp {
+    font-family: var(--font-sans-jp);
+    font-size: clamp(0.85rem, 1.4vw, 1.05rem);
+    color: var(--color-white);
+    line-height: 2.2;
+    letter-spacing: 0.06em;
+    text-align: center;
+    max-width: 36ch;
+  }
+
+  /* ====== ABOUT ====== */
+  .about-section {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  .about-grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: clamp(1.5rem, 4vw, 4rem);
+    grid-template-columns: 1fr 1fr;
     align-items: start;
   }
 
-  .feature-grid__statement h2 {
-    margin-bottom: 1rem;
-    font-size: clamp(2rem, 4vw, 3rem);
-    font-weight: 600;
-    line-height: 1.05;
+  .about-left {
+    padding: var(--space-2xl) var(--layout-padding);
+    display: grid;
+    gap: 1rem;
+    align-content: start;
   }
 
-  .feature-grid__statement p {
-    margin-bottom: 1.4rem;
-    color: var(--color-ink-mid);
+  .about-title {
+    font-family: var(--font-display);
+    font-size: var(--text-hero);
+    font-weight: 400;
+    line-height: 0.95;
+    color: var(--color-ink);
   }
 
-  .feature-grid__image img {
+  .about-right {
+    overflow: clip;
+    height: 60vh;
+    min-height: 24rem;
+  }
+
+  .about-right img {
     width: 100%;
-    aspect-ratio: 0.9;
+    height: 100%;
     object-fit: cover;
   }
 
-  .gallery-ribbon {
-    padding-top: 0;
+  .about-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(2rem, 5vw, 5rem);
+    align-items: start;
+    padding-top: var(--space-xl);
+    padding-bottom: var(--space-2xl);
   }
 
-  .gallery-ribbon__track {
+  .about-body__text {
+    display: grid;
+    gap: 1.2rem;
+  }
+
+  .about-body__text p {
+    font-size: var(--text-body-lg);
+    line-height: var(--lh-lead);
+    color: var(--color-ink-mid);
+  }
+
+  .about-body__photo {
+    overflow: clip;
+  }
+
+  .about-body__photo img {
+    width: 100%;
+    aspect-ratio: 0.8;
+    object-fit: cover;
+  }
+
+  /* ====== VIEW MORE BUTTON ====== */
+  .view-more-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: var(--text-sm);
+    color: var(--color-ink);
+    letter-spacing: 0.08em;
+    transition: color var(--transition-fast);
+  }
+
+  .view-more-btn:hover {
+    color: var(--color-gold);
+  }
+
+  .view-more-btn__circle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.2rem;
+    height: 2.2rem;
+    border-radius: 999px;
+    background: var(--color-gold);
+    color: var(--color-white);
+    font-size: 0.9rem;
+    transition: background var(--transition-fast);
+  }
+
+  .view-more-btn:hover .view-more-btn__circle {
+    background: var(--color-ink);
+  }
+
+  /* ====== CINEMATIC BAND ====== */
+  .cinematic-band {
+    overflow: clip;
+    height: 55vh;
+    min-height: 20rem;
+  }
+
+  .cinematic-band__media {
+    height: 100%;
+  }
+
+  .cinematic-band__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* ====== PROJECT SECTION ====== */
+  .project-section {
+    overflow: clip;
+  }
+
+  .project-collage {
+    position: relative;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-2xl) var(--layout-padding);
+  }
+
+  .project-photo {
+    position: absolute;
+    overflow: clip;
+  }
+
+  .project-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .project-photo--1 {
+    top: 5%;
+    left: 4%;
+    width: clamp(10rem, 18vw, 18rem);
+    height: clamp(13rem, 23vw, 23rem);
+  }
+
+  .project-photo--2 {
+    top: 3%;
+    right: 5%;
+    width: clamp(8rem, 14vw, 14rem);
+    height: clamp(10rem, 17vw, 17rem);
+  }
+
+  .project-photo--3 {
+    bottom: 8%;
+    left: 8%;
+    width: clamp(9rem, 16vw, 16rem);
+    height: clamp(11rem, 19vw, 19rem);
+  }
+
+  .project-photo--4 {
+    bottom: 5%;
+    right: 4%;
+    width: clamp(9rem, 16vw, 16rem);
+    height: clamp(11rem, 19vw, 19rem);
+  }
+
+  .project-main {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: flex-end;
+    gap: 2rem;
+  }
+
+  .project-hand {
+    width: clamp(14rem, 22vw, 22rem);
+    height: auto;
+    object-fit: contain;
+  }
+
+  .project-main__text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .project-jp-title {
+    display: flex;
+    gap: 0.1em;
+    font-family: var(--font-serif-jp);
+    font-size: clamp(2.5rem, 5vw, 5rem);
+    font-weight: 700;
+    line-height: 1;
+    color: var(--color-ink);
+    writing-mode: vertical-rl;
+  }
+
+  .project-jp-title span {
+    display: block;
+  }
+
+  .project-subtitle {
+    font-family: var(--font-display);
+    font-size: clamp(1rem, 2vw, 1.5rem);
+    color: var(--color-ink-mid);
+    letter-spacing: 0.1em;
+    margin-top: 0.5rem;
+    writing-mode: horizontal-tb;
+  }
+
+  .project-badge {
+    position: absolute;
+    right: 6%;
+    top: 30%;
+    font-family: var(--font-sans-jp);
+    font-size: var(--text-xs);
+    color: var(--color-ink-mid);
+    line-height: 1.8;
+    letter-spacing: 0.04em;
+    text-align: center;
+  }
+
+  .project-body {
+    padding-top: var(--space-xl);
+    padding-bottom: var(--space-xl);
+  }
+
+  .project-body__inner {
+    max-width: 48rem;
+    display: grid;
+    gap: 1.2rem;
+  }
+
+  .project-heading {
+    font-family: var(--font-serif-jp);
+    font-size: clamp(1.4rem, 2.5vw, 2rem);
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--color-ink);
+  }
+
+  .project-body__inner p {
+    font-size: var(--text-body-lg);
+    line-height: var(--lh-lead);
+    color: var(--color-ink-mid);
+  }
+
+  .project-gallery {
+    padding-bottom: var(--space-xl);
+  }
+
+  .project-gallery__track {
     display: grid;
     grid-auto-flow: column;
-    grid-auto-columns: minmax(12rem, 17rem);
+    grid-auto-columns: clamp(10rem, 18vw, 18rem);
     gap: 1rem;
     overflow-x: auto;
-    padding: 0 clamp(1.5rem, 6vw, 5rem) 0.5rem;
     scrollbar-width: none;
+    scroll-snap-type: x mandatory;
   }
 
-  .gallery-ribbon__track::-webkit-scrollbar {
+  .project-gallery__track::-webkit-scrollbar {
     display: none;
   }
 
-  .gallery-ribbon__card img {
+  .project-gallery__item {
+    scroll-snap-align: start;
+    overflow: clip;
+  }
+
+  .project-gallery__item img {
     width: 100%;
     aspect-ratio: 0.78;
     object-fit: cover;
   }
 
-  .news-section__header {
-    margin-bottom: 2rem;
+  /* ====== MAP SECTION ====== */
+  .map-section {
+    background: var(--color-cream);
   }
 
-  @media (max-width: 900px) {
-    .hero__panels,
-    .intro-band__layout,
-    .feature-grid__layout,
-    .news-section__header {
+  .map-intro {
+    display: grid;
+    gap: 1rem;
+    text-align: center;
+    max-width: 52rem;
+    margin-inline: auto;
+  }
+
+  .map-title {
+    font-family: var(--font-display);
+    font-size: var(--text-hero);
+    font-weight: 400;
+    line-height: 0.95;
+    color: var(--color-ink);
+  }
+
+  .map-desc {
+    font-size: var(--text-body-lg);
+    color: var(--color-ink-mid);
+    line-height: 1.8;
+  }
+
+  .map-desc small {
+    font-size: var(--text-sm);
+    color: var(--color-ink-light);
+  }
+
+  .map-image {
+    margin-top: var(--space-xl);
+  }
+
+  .map-placeholder {
+    width: 100%;
+    aspect-ratio: 1.4;
+    background: var(--color-cream-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--text-sm);
+    color: var(--color-ink-light);
+    letter-spacing: var(--ls-wide);
+  }
+
+  .map-stores {
+    margin-top: var(--space-xl);
+  }
+
+  .store-list {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.6rem 1.5rem;
+  }
+
+  .store-list__item {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    font-size: var(--text-sm);
+    color: var(--color-ink-mid);
+  }
+
+  .store-list__num {
+    color: var(--color-ink-light);
+    font-size: var(--text-xs);
+    flex-shrink: 0;
+  }
+
+  .map-note {
+    margin-top: 1rem;
+    font-size: var(--text-xs);
+    color: var(--color-ink-light);
+  }
+
+  /* ====== ACCESS SECTION ====== */
+  .access-section {
+    background: var(--color-cream);
+  }
+
+  .access-grid {
+    display: grid;
+    grid-template-columns: minmax(14rem, 22rem) 1fr;
+    gap: clamp(2rem, 5vw, 6rem);
+    align-items: start;
+  }
+
+  .access-header {
+    display: grid;
+    gap: 1rem;
+    align-content: start;
+  }
+
+  .access-title {
+    font-family: var(--font-display);
+    font-size: var(--text-hero);
+    font-weight: 400;
+    line-height: 0.95;
+    color: var(--color-ink);
+  }
+
+  .access-map-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: var(--text-sm);
+    color: var(--color-ink);
+    transition: color var(--transition-fast);
+  }
+
+  .access-map-link:hover {
+    color: var(--color-gold);
+  }
+
+  .access-map-link__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 999px;
+    background: var(--color-gold);
+  }
+
+  .access-info {
+    display: grid;
+    gap: 0;
+  }
+
+  .access-item {
+    padding: 2rem;
+    border: 1px solid var(--color-rule);
+  }
+
+  .access-item + .access-item {
+    border-top: none;
+  }
+
+  .access-item__title {
+    font-family: var(--font-serif-jp);
+    font-size: var(--text-h3);
+    font-weight: 600;
+    color: var(--color-ink);
+    margin-bottom: 1rem;
+  }
+
+  .access-item p {
+    font-size: var(--text-body);
+    line-height: 2;
+    color: var(--color-ink-mid);
+  }
+
+  .access-item p + p {
+    margin-top: 1rem;
+  }
+
+  /* ====== NEWS SECTION ====== */
+  .news-section {
+    background: var(--color-cream);
+  }
+
+  .news-grid {
+    display: grid;
+    grid-template-columns: minmax(12rem, 20rem) 1fr;
+    gap: clamp(2rem, 5vw, 6rem);
+    align-items: start;
+  }
+
+  .news-header {
+    display: grid;
+    gap: 1rem;
+    align-content: start;
+  }
+
+  .news-title {
+    font-family: var(--font-display);
+    font-size: var(--text-hero);
+    font-weight: 400;
+    line-height: 0.95;
+    color: var(--color-ink);
+  }
+
+  /* ====== RESPONSIVE ====== */
+  @media (max-width: 1024px) {
+    .about-body {
       grid-template-columns: 1fr;
     }
 
-    .hero {
-      min-height: auto;
+    .store-list {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 900px) {
+    .about-grid {
+      grid-template-columns: 1fr;
     }
 
-    .hero__panel img {
-      min-height: 24rem;
+    .about-right {
+      height: 50vw;
     }
 
-    .hero__panel--secondary {
+    .access-grid,
+    .news-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .project-photo {
       display: none;
     }
 
-    .hero__copy {
-      left: 1.5rem;
-      right: 1.5rem;
-      bottom: 1.5rem;
-      max-width: none;
+    .project-badge {
+      display: none;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .home-hero {
+      height: 70vh;
     }
 
-    .hero__vertical {
-      top: 1.25rem;
-      right: 1rem;
+    .store-list {
+      grid-template-columns: 1fr;
     }
 
-    .news-section__header .view-more {
-      justify-self: start;
+    .project-collage {
+      padding-inline: var(--layout-padding-sm);
+      min-height: auto;
     }
   }
 </style>

@@ -1,16 +1,16 @@
 ---
-title: "New project launch event 'Re Start' to be held on January 24"
+title: "Tsubaki project launch event \"Re Start\" — 24 January"
 date: "2026-01-22"
 heroImage: "/images/news-hero.jpg"
-tags: ["Community", "New Project Launch"]
+tags: ["Tsubaki", "New Project"]
 ---
 
-On Friday, January 24, we will host the new project launch event "Re Start" at the community space.
+On Friday 24 January, we will be holding a project launch presentation — "Re Start" — introducing new initiatives aimed at energising the local community.
 
-At this event, we will present new initiatives and projects aimed at further revitalizing the local community. We look forward to your participation.
+We look forward to welcoming you.
 
-**Date:** Friday, January 24, 2026, 2:00 PM - 4:00 PM
+**Date:** Friday, 24 January 2026, 14:00–16:00
 **Venue:** Tsubaki Community Space
 **Admission:** Free
 
-If you would like to attend, please contact us through our inquiry form.
+If you would like to attend, please get in touch via the contact form.

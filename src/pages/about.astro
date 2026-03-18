@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
+import SectionIntro from '../components/SectionIntro.astro';
 
 function withBase(path: string): string {
   const base = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -8,40 +9,31 @@ function withBase(path: string): string {
 }
 
 const stores = [
-  { name: 'Yamada Coffee', category: 'Cafe', description: 'A heritage coffee house operating since the early 1930s. Serving freshly roasted, house-blend coffee.', web: '#', ig: '#' },
-  { name: 'Sato Books', category: 'Books', description: 'A beloved neighborhood bookstore for over 50 years, featuring a curated section of local authors.', web: '#', ig: '#' },
-  { name: 'Suzuki Diner', category: 'Dining', description: 'Known for set meals made with locally sourced ingredients. Expect a lunchtime queue.', web: '#', ig: '#' },
-  { name: 'Kotori Flowers', category: 'Florist', description: 'A flower shop that handles seasonal blooms with care. Perfect for gifts.', web: '#', ig: '#' },
-  { name: 'Midori Boutique', category: 'Fashion', description: 'A locally rooted fashion shop. Also offers garment alterations and tailoring.', web: '#', ig: '#' },
-  { name: 'Tanaka Pharmacy', category: 'Pharmacy', description: 'A trusted neighborhood pharmacy since 1955. Friendly consultations always available.', web: '#', ig: '#' },
+  { name: 'Yamada Coffee', category: 'Cafe', description: 'A heritage coffee house operating since the early 1930s. Serving freshly roasted, house-blend coffee.', image: '/images/store-coffee.jpg', web: '#', ig: '#' },
+  { name: 'Sato Books', category: 'Books', description: 'A beloved neighborhood bookstore for over 50 years, featuring a curated section of local authors.', image: '/images/store-books.jpg', web: '#', ig: '#' },
+  { name: 'Suzuki Diner', category: 'Dining', description: 'Known for set meals made with locally sourced ingredients. Expect a lunchtime queue.', image: '/images/store-diner.jpg', web: '#', ig: '#' },
+  { name: 'Kotori Flowers', category: 'Florist', description: 'A flower shop that handles seasonal blooms with care. Perfect for gifts.', image: '/images/store-florist.jpg', web: '#', ig: '#' },
+  { name: 'Midori Boutique', category: 'Fashion', description: 'A locally rooted fashion shop. Also offers garment alterations and tailoring.', image: '/images/store-fashion.jpg', web: '#', ig: '#' },
+  { name: 'Tanaka Pharmacy', category: 'Pharmacy', description: 'A trusted neighborhood pharmacy since 1955. Friendly consultations always available.', image: '/images/store-pharmacy.jpg', web: '#', ig: '#' },
 ];
 ---
 
-<BaseLayout title="About — Tsubaki" description="About Tsubaki. Discover the history of our community and the participating stores.">
-  <PageHero image="/images/about-hero.jpg" alt="Street view" overline="About us" title="About" />
+<BaseLayout title="About — Tsubaki" description="About Tsubaki. Discover the history of our community and participating stores.">
+  <PageHero image="/images/about-hero.jpg" alt="Tsubaki street view" overline="About Us" title="About" serial="" summary="" />
 
   <section class="philosophy-section section">
     <div class="container">
-      <div class="philosophy-intro">
-        <div class="section-header" data-reveal>
-          <span class="section-overline">Philosophy</span>
-          <h2 class="section-title">A calm street with a long memory</h2>
-        </div>
-        <div class="editorial-copy" data-reveal>
-          <p>Tsubaki exists for local organisations and businesses that want to communicate with the same care they put into their storefronts. The layout borrows from signboards, programme leaflets, and editorial pages rather than modern app dashboards.</p>
-          <p>That means restrained colour, clear hierarchy, and copy blocks that breathe. The tone is warm and collected, never loud.</p>
-        </div>
-      </div>
+      <SectionIntro overline="About the District" title="A vibrant community with a long history" lede="Tsubaki is a curated district rooted in local culture and creativity. For generations, it has stood alongside the everyday lives of local people, becoming an inseparable part of the community." detail="From long-established institutions to energetic new proprietors, our district is home to a diverse range of shops and stories. Each store has a unique character, and the warm relationships between shopkeepers and visitors make this place truly special." />
 
       <div class="philosophy-grid">
         <figure class="philosophy-grid__image" data-reveal>
-          <img src={withBase('/images/about-main.jpg')} alt="Local storefront with window display" width="720" height="920" loading="lazy" decoding="async" />
+          <img src={withBase('/images/about-main.jpg')} alt="Tsubaki storefront" width="720" height="920" loading="lazy" decoding="async" />
         </figure>
         <div class="philosophy-inner" data-reveal>
-          <p class="philosophy-text">Tsubaki is a community with a rich history, situated at the heart of its neighborhood. Through generations, it has stood alongside the lives of local people, supporting their everyday rhythms.</p>
-          <p class="philosophy-text">From long-established institutions to young proprietors charting new territory, our community is home to a diverse range of personalities and stories. The unique narrative of each shop and the warm relationships with visitors are what make this place truly special.</p>
-          <p class="philosophy-text">As a gathering place where people meet, converse, and forge new connections, Tsubaki will continue to evolve. We are certain you will find something here to love.</p>
-          <p class="philosophy-text">With every visit, we hope you discover small joys woven into the fabric of everyday life.</p>
+          <p class="philosophy-text">We cherish what each person loves, and we have always sought to offer things and experiences that bring genuine delight. May what we love resonate with you, adding a small but meaningful richness to your everyday life.</p>
+          <p class="philosophy-text">Tsubaki is home to a rich variety of shops — from long-established names to stores run by young, passionate proprietors. The stories behind each shop and the warm connections formed with visitors are what make this place truly special.</p>
+          <p class="philosophy-text">As a gathering place where people meet, conversations happen, and new connections are born, Tsubaki will continue to evolve. We are confident you will find something here that you love.</p>
+          <p class="philosophy-text">Please feel free to drop by anytime. This place is filled with small joys that add colour to your daily life.</p>
         </div>
       </div>
     </div>
@@ -49,19 +41,13 @@ const stores = [
 
   <section class="stores-section section">
     <div class="container">
-      <div class="stores-header">
-        <div class="section-header" data-reveal>
-          <span class="section-overline">Participating stores</span>
-          <h2 class="section-title">A mix of old hands and newer voices</h2>
-        </div>
-        <p class="editorial-copy" data-reveal>Each listing is treated as a slim editorial strip rather than a boxed card: image, category, description, and direct links in a single airy column.</p>
-      </div>
+      <SectionIntro overline="Member Stores" title="Stores" lede="Tsubaki has a diverse mix of long-established and new local shops. Each store is unique and offers something special." />
 
       <div class="stores-grid">
         {stores.map((store) => (
           <article class="store-card" data-reveal>
             <div class="store-card__photo">
-              <img src={withBase('/images/store-placeholder.jpg')} alt={store.name} width="400" height="300" loading="lazy" decoding="async" />
+              <img src={withBase(store.image)} alt={store.name} width="400" height="300" loading="lazy" decoding="async" />
             </div>
             <div class="store-card__body">
               <span class="store-card__category">{store.category}</span>
@@ -81,10 +67,10 @@ const stores = [
   <section class="join-section section section--cream-dark">
     <div class="container">
       <div class="join-inner" data-reveal>
-        <span class="section-overline">Join our association</span>
-        <h2 class="join-heading">Help us build a vibrant community</h2>
-        <p class="join-body">We welcome shops and individuals who share our goal of revitalizing the local community. Please do not hesitate to reach out for more information.</p>
-        <p class="join-body">Whether you are considering opening a new shop, participating in events, or joining the community, we offer a variety of ways to get involved.</p>
+        <span class="section-overline">Join the Association</span>
+        <h2 class="join-heading">Join the association</h2>
+        <p class="join-body">We welcome shops and individuals who wish to help revitalise the local community. Please feel free to get in touch for more details.</p>
+        <p class="join-body">There are many ways to get involved — opening a new shop, participating in events, or joining the community network. We would love to welcome you.</p>
       </div>
     </div>
   </section>
@@ -92,13 +78,15 @@ const stores = [
   <section class="logo-section section">
     <div class="container">
       <div class="logo-inner" data-reveal>
-        <span class="section-overline">About the logo</span>
+        <span class="section-overline">About the Logo</span>
         <div class="logo-display">
           <div class="logo-mark" aria-label="Tsubaki logo">
-            <span class="logo-mark__kanji">椿</span>
+            <div class="logo-mark__kanji-grid">
+              <span>椿</span>
+            </div>
             <div class="logo-mark__accent" aria-hidden="true"></div>
           </div>
-          <p class="logo-desc">The Tsubaki logo is a design that symbolizes local culture and history. The warm gold accent represents the bonds between community members and the radiance of the neighborhood. The vertical lettering pays homage to the tradition of Japanese signboard culture.</p>
+          <p class="logo-desc">The Tsubaki logo mark is a design that symbolises the culture and history of the local community. The warm gold accent represents the connections within the community and the vitality of the district. The triangular mountain motif expresses the strength of the land and the spirit of its people.</p>
         </div>
       </div>
     </div>
@@ -108,11 +96,7 @@ const stores = [
 <style>
   .philosophy-intro,
   .stores-header {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: clamp(1.5rem, 4vw, 4rem);
     margin-bottom: 3rem;
-    align-items: start;
   }
 
   .philosophy-grid {
@@ -213,10 +197,18 @@ const stores = [
     gap: 0.6rem;
   }
 
-  .logo-mark__kanji {
+  .logo-mark__kanji-grid {
+    display: flex;
+    gap: 0.25em;
     font-family: var(--font-serif-jp);
-    font-size: 3rem;
-    letter-spacing: 0.18em;
+    font-size: 1.4rem;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    line-height: 1.3;
+  }
+
+  .logo-mark__kanji-grid span {
+    display: block;
   }
 
   .logo-mark__accent {

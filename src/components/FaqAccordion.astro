@@ -34,26 +34,6 @@ const { items } = Astro.props;
   <div class="faq-stack__rule" aria-hidden="true"></div>
 </div>
 
-<script>
-  function initFaq(root) {
-    if (!root || root.dataset.faqReady === 'true') return;
-    root.dataset.faqReady = 'true';
-    root.querySelectorAll('[data-faq-trigger]').forEach((button) => {
-      button.addEventListener('click', () => {
-        const panel = button.parentElement?.querySelector('[data-faq-panel]');
-        const expanded = button.getAttribute('aria-expanded') === 'true';
-        button.setAttribute('aria-expanded', String(!expanded));
-        panel.hidden = expanded;
-      });
-    });
-  }
-
-  document.querySelectorAll('[data-faq-root]').forEach(initFaq);
-  document.addEventListener('astro:after-swap', () => {
-    document.querySelectorAll('[data-faq-root]').forEach(initFaq);
-  });
-</script>
-
 <style>
   .faq-stack__rule {
     height: 1px;
@@ -99,6 +79,7 @@ const { items } = Astro.props;
     padding: 0 0 1.75rem 3rem;
     max-width: 68ch;
     color: var(--color-ink-mid);
+    overflow: clip;
   }
 
   @media (max-width: 720px) {

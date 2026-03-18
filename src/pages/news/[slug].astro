@@ -1,6 +1,6 @@
 ---
 import { getCollection, render } from 'astro:content';
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostLayout from '../../layouts/PostLayout.astro';
 
 export async function getStaticPaths() {
   const newsItems = await getCollection('news');
@@ -13,147 +13,31 @@ export async function getStaticPaths() {
 const { item } = Astro.props;
 const { Content } = await render(item);
 
-function withBase(path: string): string {
-  const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-  return path === '/' ? `${base}/` : `${base}/${path.replace(/^\//, '')}`;
-}
-
-function formatDate(date: Date): string {
-  return `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}`;
-}
 ---
 
-<BaseLayout title={`${item.data.title} — Tsubaki`} description={item.data.title}>
-  <section class="article-header section">
-    <div class="container">
-      <nav class="breadcrumb" aria-label="Breadcrumb">
-        <a href={withBase('/news')} class="breadcrumb__link">News</a>
-        <span class="breadcrumb__sep" aria-hidden="true"> › </span>
-        <span class="breadcrumb__current">{item.data.title}</span>
-      </nav>
-
-      <h1 class="article-display-label">News</h1>
-      <div class="article-header__rule h-rule"></div>
-      <time class="article-date" datetime={item.data.date.toISOString()}>{formatDate(item.data.date)}</time>
-      <h2 class="article-title">{item.data.title}</h2>
-    </div>
-  </section>
-
-  <section class="article-body section">
-    <div class="container">
-      <div class="article-content">
-        {item.data.tags.length > 0 && (
-          <div class="article-tags" role="list" aria-label="Tags">
-            {item.data.tags.map((tag) => (
-              <span class="article-tag" role="listitem">[ {tag} ]</span>
-            ))}
-          </div>
-        )}
-
-        {item.data.heroImage && (
-          <figure class="article-hero">
-            <img src={withBase(item.data.heroImage)} alt={item.data.title} width="1200" height="760" loading="eager" decoding="async" />
-          </figure>
-        )}
-
-        <div class="article-prose">
-          <Content />
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="article-nav section">
-    <div class="container">
-      <div class="h-rule"></div>
-      <div class="article-nav__inner">
-        <a href={withBase('/news')} class="article-nav__back">← Back to list</a>
-      </div>
-      <div class="h-rule"></div>
-    </div>
-  </section>
-</BaseLayout>
+<PostLayout
+  title={item.data.title}
+  titleEn="Neighbourhood Bulletin"
+  description="Street-level updates, programme notes, and editorial notices from Tsubaki."
+  date={item.data.date}
+  heroImage={item.data.heroImage}
+  tags={item.data.tags}
+>
+  <div class="article-intro">
+    <a href={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/news`} class="back-link">Back to all news</a>
+  </div>
+  <Content />
+</PostLayout>
 
 <style>
-  .article-header {
-    padding-bottom: 0.5rem;
+  .article-intro {
+    margin-bottom: 1.5rem;
   }
 
-  .breadcrumb {
+  .back-link {
     font-size: var(--text-xs);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
     color: var(--color-ink-light);
-    margin-bottom: 2rem;
-  }
-
-  .article-display-label {
-    font-family: var(--font-display);
-    font-size: clamp(2.5rem, 6vw, var(--text-hero));
-    font-weight: 400;
-    margin-bottom: 1rem;
-  }
-
-  .article-header__rule {
-    width: 60px;
-    margin-bottom: 1rem;
-  }
-
-  .article-date {
-    display: block;
-    color: var(--color-ink-light);
-    margin-bottom: 1rem;
-  }
-
-  .article-title {
-    max-width: 38rem;
-  }
-
-  .article-content {
-    max-width: 680px;
-  }
-
-  .article-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 2rem;
-  }
-
-  .article-tag {
-    border: 1px solid var(--color-rule);
-    padding: 0.35rem 0.65rem;
-    font-size: var(--text-xs);
-  }
-
-  .article-hero {
-    margin: 0 0 2rem;
-  }
-
-  .article-hero img,
-  .article-prose :global(img) {
-    width: 100%;
-    aspect-ratio: 1.45;
-    object-fit: cover;
-  }
-
-  .article-prose {
-    font-size: var(--text-body-lg);
-    line-height: 2;
-  }
-
-  .article-prose :global(p) {
-    margin-bottom: 1.5em;
-  }
-
-  .article-prose :global(h2),
-  .article-prose :global(h3) {
-    margin: 2em 0 0.75em;
-  }
-
-  .article-nav__inner {
-    padding: 24px 0;
-  }
-
-  .article-nav__back {
-    color: var(--color-ink-mid);
   }
 </style>

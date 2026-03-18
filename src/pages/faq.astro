@@ -1,71 +1,48 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import FaqAccordion from '../components/FaqAccordion.astro';
 
 const faqs = [
   {
-    question: 'How do I join the membership?',
-    answer: 'Simply click the "Subscribe" button to sign up. After registering, you will automatically receive a membership guide.',
+    question: 'How do I join the membership programme?',
+    answer: 'First, add our official LINE account as a friend and join the open chat. Full instructions will be shared via LINE.',
   },
   {
-    question: 'Can I join from outside the local area?',
-    answer: 'Absolutely. Anyone who wishes to support our community is welcome to join, regardless of location.',
+    question: 'Can I join if I live outside the local area?',
+    answer: 'Yes, you are welcome to join from anywhere. Online participation and event-only attendance are both warmly welcomed.',
   },
   {
-    question: 'Are there any membership requirements?',
-    answer: 'There are no special requirements. Anyone aged 18 or above is welcome to participate.',
+    question: 'Are there any requirements to join?',
+    answer: 'No special qualifications are needed. Anyone who wants to support Tsubaki and the local community is welcome.',
   },
   {
     question: 'Is there a minimum membership period?',
-    answer: 'There is no minimum commitment. You are free to cancel your membership at any time.',
+    answer: 'There is no minimum period. You may cancel at any time, though we would be grateful for your continued support.',
   },
   {
     question: 'How do I cancel my membership?',
-    answer: 'You can complete the cancellation process through your account settings. Please refer to the guide sent after registration for details.',
+    answer: 'To cancel, please let us know via our official LINE account and we will guide you through the process.',
   },
   {
-    question: 'Where can I find details about the member benefits?',
-    answer: 'After subscribing, we will send you a detailed guide outlining all available benefits. You can also browse a list of participating stores within your account.',
+    question: 'Where can I find more details about member benefits?',
+    answer: 'Full details of member benefits are listed on the Project page. Updates are also shared regularly via LINE.',
   },
 ];
 ---
 
-<BaseLayout title="FAQ — Tsubaki" description="Frequently asked questions about the Tsubaki community and the Gather What You Love project.">
+<BaseLayout title="FAQ — Tsubaki" description="Frequently asked questions about Tsubaki and the community membership programme.">
 
-  <!-- PAGE HEADER: asymmetric 2-col layout -->
-  <section class="faq-page-header section">
-    <div class="container">
-      <div class="faq-header-inner">
-        <div class="faq-header__left">
-          <span class="faq-overline">Frequently Asked Questions</span>
-          <h1 class="faq-title">FAQ</h1>
-        </div>
+  <section class="faq-page section">
+    <div class="container faq-page__grid">
+      <!-- Left: label + title -->
+      <div class="faq-page__left" data-reveal>
+        <span class="faq-pill">Frequently Asked Questions</span>
+        <h1 class="faq-page__title">FAQ</h1>
+      </div>
 
-        <!-- FAQ LIST -->
-        <div class="faq-list-area">
-          <div class="faq-list" role="list">
-            {faqs.map((faq, i) => (
-              <div class="faq-item" role="listitem" data-reveal>
-                <div class="h-rule"></div>
-                <div class="faq-item__inner">
-                  <button
-                    class="faq-question"
-                    type="button"
-                    aria-expanded="false"
-                    aria-controls={`faq-ans-${i}`}
-                  >
-                    <span class="faq-q-icon" aria-hidden="true">Q</span>
-                    <span class="faq-q-text">{faq.question}</span>
-                    <span class="faq-toggle" aria-hidden="true">＋</span>
-                  </button>
-                  <div class="faq-answer" id={`faq-ans-${i}`} hidden>
-                    <p class="faq-answer-text">{faq.answer}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-            <div class="h-rule"></div>
-          </div>
-        </div>
+      <!-- Right: accordion -->
+      <div class="faq-page__right" data-reveal>
+        <FaqAccordion items={faqs} />
       </div>
     </div>
   </section>
@@ -73,147 +50,49 @@ const faqs = [
 </BaseLayout>
 
 <style>
-  /* ---- HEADER LAYOUT ---- */
-  .faq-header-inner {
+  .faq-page__grid {
     display: grid;
-    grid-template-columns: 220px 1fr;
-    gap: 64px;
+    grid-template-columns: minmax(12rem, 20rem) 1fr;
+    gap: clamp(2rem, 5vw, 6rem);
     align-items: start;
+    padding-top: var(--space-2xl);
+    padding-bottom: var(--space-2xl);
   }
 
-  .faq-header__left {
-    padding-top: 16px;
+  .faq-page__left {
+    display: grid;
+    gap: 1.2rem;
+    align-content: start;
     position: sticky;
-    top: calc(var(--layout-nav-height) + 32px);
+    top: calc(var(--layout-nav-height) + 2rem);
   }
 
-  .faq-overline {
+  .faq-pill {
     display: inline-block;
+    padding: 0.35rem 1rem;
+    border: 1px solid var(--color-ink-mid);
+    border-radius: 999px;
     font-family: var(--font-sans-jp);
     font-size: var(--text-xs);
     color: var(--color-ink-mid);
-    letter-spacing: var(--ls-wider);
-    border: 1px solid var(--color-rule);
-    border-radius: 100px;
-    padding: 4px 12px;
-    margin-bottom: 16px;
+    letter-spacing: 0.04em;
   }
 
-  .faq-title {
+  .faq-page__title {
     font-family: var(--font-display);
-    font-size: clamp(3rem, 8vw, var(--text-hero));
+    font-size: var(--text-hero);
     font-weight: 400;
+    line-height: 0.95;
     color: var(--color-ink);
-    letter-spacing: 0;
-    margin: 0;
-    line-height: 1;
   }
 
-  /* ---- FAQ LIST ---- */
-  .faq-list-area {
-    padding-top: 16px;
-  }
-
-  .faq-list {
-    width: 100%;
-  }
-
-  .faq-item__inner {
-    /* Inner container for question + answer. */
-  }
-
-  .faq-question {
-    display: grid;
-    grid-template-columns: 48px 1fr 32px;
-    align-items: center;
-    width: 100%;
-    background: none;
-    border: none;
-    padding: 24px 0;
-    text-align: left;
-    cursor: pointer;
-    gap: 16px;
-  }
-
-  .faq-q-icon {
-    font-family: var(--font-display);
-    font-size: var(--text-h2);
-    font-weight: 400;
-    color: var(--color-ink-light);
-    line-height: 1;
-    text-align: center;
-  }
-
-  .faq-q-text {
-    font-family: var(--font-sans-jp);
-    font-size: var(--text-body);
-    color: var(--color-ink);
-    letter-spacing: var(--ls-base);
-    line-height: var(--lh-body);
-  }
-
-  .faq-toggle {
-    font-size: 1.25rem;
-    color: var(--color-ink-mid);
-    text-align: right;
-    transition: transform 0.3s ease;
-    flex-shrink: 0;
-  }
-
-  .faq-question[aria-expanded="true"] .faq-toggle {
-    transform: rotate(45deg);
-  }
-
-  .faq-answer {
-    padding: 0 0 24px 64px;
-  }
-
-  .faq-answer-text {
-    font-family: var(--font-sans-jp);
-    font-size: var(--text-body);
-    color: var(--color-ink-mid);
-    line-height: var(--lh-body);
-  }
-
-  /* ---- Responsive ---- */
   @media (max-width: 768px) {
-    .faq-header-inner {
+    .faq-page__grid {
       grid-template-columns: 1fr;
-      gap: 32px;
     }
 
-    .faq-header__left {
+    .faq-page__left {
       position: static;
-    }
-
-    .faq-question {
-      grid-template-columns: 36px 1fr 24px;
-    }
-
-    .faq-answer {
-      padding-left: 52px;
     }
   }
 </style>
-
-<script>
-  function initFaq() {
-    const buttons = document.querySelectorAll<HTMLButtonElement>('.faq-question');
-
-    buttons.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const expanded = btn.getAttribute('aria-expanded') === 'true';
-        const answerId = btn.getAttribute('aria-controls');
-        const answer = answerId ? document.getElementById(answerId) : null;
-
-        btn.setAttribute('aria-expanded', String(!expanded));
-        if (answer) {
-          answer.hidden = expanded;
-        }
-      });
-    });
-  }
-
-  document.addEventListener('astro:page-load', initFaq);
-  initFaq();
-</script>

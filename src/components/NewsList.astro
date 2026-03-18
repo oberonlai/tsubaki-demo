@@ -45,9 +45,9 @@ function formatDate(date: Date): string {
 
   .news-stack__link {
     display: grid;
-    grid-template-columns: minmax(5.75rem, 7.5rem) 1fr minmax(1rem, 2rem);
+    grid-template-columns: minmax(5.75rem, 7.5rem) 1fr 2.2rem;
     gap: 1rem;
-    align-items: baseline;
+    align-items: center;
     padding: 1.55rem 0;
     transition: color var(--transition-fast);
   }
@@ -63,9 +63,17 @@ function formatDate(date: Date): string {
   }
 
   .news-stack__arrow {
-    text-align: right;
-    color: var(--color-gold);
-    transition: transform var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 999px;
+    background: var(--color-gold);
+    color: var(--color-white);
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    transition: background var(--transition-fast), transform var(--transition-fast);
   }
 
   .news-stack__link:hover .news-stack__title,
@@ -75,7 +83,8 @@ function formatDate(date: Date): string {
 
   .news-stack__link:hover .news-stack__arrow,
   .news-stack__link:focus-visible .news-stack__arrow {
-    transform: translateX(0.18rem);
+    background: var(--color-ink);
+    transform: translateX(0.12rem);
   }
 
   @media (max-width: 720px) {

@@ -4,9 +4,11 @@ import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
 import LeftSidebar from '../components/LeftSidebar.astro';
 import RightSidebar from '../components/RightSidebar.astro';
+import LoadingSplash from '../components/LoadingSplash.astro';
 import {
   siteName as defaultSiteName,
   siteNameEn,
+  siteTagline,
   navLinks as defaultNavLinks,
   footerNavLinks,
   socialLinks,
@@ -30,12 +32,9 @@ const {
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
-const currentDate = new Date().toLocaleDateString('en-US', {
-  year: 'numeric',
-  month: 'numeric',
-  day: 'numeric',
-  weekday: 'short',
-}).replace(/\//g, '.');
+const now = new Date();
+const weekdays = ['Sun.', 'Mon.', 'Tue.', 'Wed.', 'Thu.', 'Fri.', 'Sat.'];
+const currentDate = `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, '0')}.${String(now.getDate()).padStart(2, '0')} ${weekdays[now.getDay()]}`;
 ---
 
 <!doctype html>
@@ -63,6 +62,11 @@ const currentDate = new Date().toLocaleDateString('en-US', {
     />
   </head>
   <body>
+    <LoadingSplash />
+    <div class="page-atmosphere" aria-hidden="true">
+      <span class="page-atmosphere__glow page-atmosphere__glow--north"></span>
+      <span class="page-atmosphere__glow page-atmosphere__glow--south"></span>
+    </div>
     <LeftSidebar
       currentDate={currentDate}
       latestNewsDate={latestNewsDate}
@@ -83,29 +87,219 @@ const currentDate = new Date().toLocaleDateString('en-US', {
       />
     </div>
 
-    <script>
-      function initScrollReveal() {
-        const observer = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                entry.target.classList.add('is-visible');
-                observer.unobserve(entry.target);
-              }
-            });
-          },
-          { threshold: 0.16 },
-        );
+    <div class="ambient-markers" aria-hidden="true">
+      <span>{siteName}</span>
+      <span>{siteNameEn.toUpperCase()}</span>
+      <span>{siteTagline.toUpperCase()}</span>
+    </div>
 
-        document.querySelectorAll('[data-reveal]').forEach((el, i) => {
-          el.style.transitionDelay = `${(i % 5) * 0.08}s`;
-          observer.observe(el);
+    <script>
+      import { loadGsap } from '../utils/animations';
+      import { initTsubakiMotion } from '../utils/animations';
+
+      let cleanup: (() => void) | undefined;
+      let isTransitioning = false;
+
+      async function bootMotion() {
+        cleanup?.();
+        cleanup = await initTsubakiMotion(document);
+      }
+
+      /* SPA-style navigation: only swap <main>, keep header/sidebar/footer. */
+      async function navigateTo(url: string) {
+        if (isTransitioning) return;
+        isTransitioning = true;
+
+        const gsap = await loadGsap();
+        const main = document.querySelector('main');
+        if (!gsap || !main) {
+          window.location.href = url;
+          return;
+        }
+
+        /* Fade out current content. */
+        await gsap.to(main, {
+          opacity: 0,
+          y: -16,
+          duration: 0.3,
+          ease: 'power2.in',
+        });
+
+        try {
+          /* Fetch new page HTML. */
+          const res = await fetch(url);
+          const html = await res.text();
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+          const newMain = doc.querySelector('main');
+          const newTitle = doc.querySelector('title')?.textContent;
+
+          if (!newMain) {
+            window.location.href = url;
+            return;
+          }
+
+          /* Swap <main> content — use outerHTML to preserve data-astro-cid attributes. */
+          main.replaceWith(newMain.cloneNode(true));
+
+          /* Sync all <style> from new <head> (Astro scoped styles). */
+          document.querySelectorAll('style[data-spa-page]').forEach((s) => s.remove());
+          doc.head.querySelectorAll('style').forEach((style) => {
+            const clone = style.cloneNode(true) as HTMLStyleElement;
+            clone.setAttribute('data-spa-page', 'true');
+            document.head.appendChild(clone);
+          });
+
+          /* Also sync any <link rel="stylesheet"> unique to the new page. */
+          const existingHrefs = new Set(
+            Array.from(document.head.querySelectorAll('link[rel="stylesheet"]'))
+              .map((l) => l.getAttribute('href'))
+          );
+          doc.head.querySelectorAll('link[rel="stylesheet"]').forEach((link) => {
+            const href = link.getAttribute('href');
+            if (href && !existingHrefs.has(href)) {
+              const clone = link.cloneNode(true) as HTMLLinkElement;
+              clone.setAttribute('data-spa-page', 'true');
+              document.head.appendChild(clone);
+            }
+          });
+
+          /* Re-query main after replaceWith. */
+          const freshMain = document.querySelector('main');
+          if (!freshMain) {
+            window.location.href = url;
+            return;
+          }
+
+          /* Update title and URL. */
+          if (newTitle) document.title = newTitle;
+          window.history.pushState({}, '', url);
+          window.scrollTo({ top: 0, behavior: 'instant' });
+
+          /* Update active nav link. */
+          const path = new URL(url, window.location.origin).pathname;
+          document.querySelectorAll('[data-nav-link]').forEach((link) => {
+            const href = (link as HTMLAnchorElement).getAttribute('href') || '';
+            const isActive = path === href || (href !== '/' && path.startsWith(href));
+            link.classList.toggle('is-active', isActive);
+          });
+
+          /* Re-init GSAP animations for new content. */
+          cleanup?.();
+          cleanup = await initTsubakiMotion(document);
+
+          /* Fade in new content. */
+          gsap.fromTo(freshMain,
+            { opacity: 0, y: 20 },
+            { opacity: 1, y: 0, duration: 0.45, ease: 'power3.out' }
+          );
+        } catch {
+          window.location.href = url;
+        } finally {
+          isTransitioning = false;
+        }
+      }
+
+      /* Intercept internal link clicks. */
+      function initSpaNav() {
+        document.addEventListener('click', (e) => {
+          const anchor = (e.target as Element).closest('a[href]') as HTMLAnchorElement | null;
+          if (!anchor) return;
+          if (
+            anchor.hostname !== window.location.hostname ||
+            anchor.target === '_blank' ||
+            anchor.hasAttribute('download')
+          ) return;
+
+          const href = anchor.getAttribute('href');
+          if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:')) return;
+
+          e.preventDefault();
+          navigateTo(anchor.href);
+        });
+
+        /* Handle browser back/forward. */
+        window.addEventListener('popstate', () => {
+          navigateTo(window.location.href);
         });
       }
 
-      document.addEventListener('astro:page-load', initScrollReveal);
-      document.addEventListener('astro:after-swap', initScrollReveal);
-      initScrollReveal();
+      /* Initial page fade in. */
+      async function initialFadeIn() {
+        const gsap = await loadGsap();
+        const main = document.querySelector('main');
+        if (gsap && main) {
+          gsap.fromTo(main,
+            { opacity: 0, y: 16 },
+            { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out' }
+          );
+        }
+      }
+
+      bootMotion();
+      initSpaNav();
+      initialFadeIn();
     </script>
   </body>
 </html>
+
+<style>
+  .page-atmosphere {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: clip;
+  }
+
+  .page-atmosphere__glow {
+    position: absolute;
+    border-radius: 999px;
+    filter: blur(10px);
+    opacity: 0.5;
+  }
+
+  .page-atmosphere__glow--north {
+    top: -12rem;
+    right: -6rem;
+    width: 28rem;
+    height: 28rem;
+    background: radial-gradient(circle, rgba(184, 155, 106, 0.26), transparent 70%);
+  }
+
+  .page-atmosphere__glow--south {
+    bottom: 8rem;
+    left: -9rem;
+    width: 24rem;
+    height: 24rem;
+    background: radial-gradient(circle, rgba(132, 99, 58, 0.12), transparent 72%);
+  }
+
+  .ambient-markers {
+    position: fixed;
+    right: clamp(1rem, 2vw, 2rem);
+    bottom: clamp(1rem, 2vw, 1.75rem);
+    z-index: 2;
+    display: grid;
+    gap: 0.2rem;
+    pointer-events: none;
+    mix-blend-mode: multiply;
+  }
+
+  .ambient-markers span {
+    font-size: 0.62rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--color-gold) 62%, var(--color-ink-light));
+  }
+
+  @media (max-width: 900px) {
+    .page-atmosphere__glow--south {
+      bottom: 22rem;
+    }
+
+    .ambient-markers {
+      display: none;
+    }
+  }
+</style>

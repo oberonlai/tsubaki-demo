@@ -4,6 +4,8 @@ interface Props {
   overline: string;
   title: string;
   alt: string;
+  summary?: string;
+  serial?: string;
   align?: 'left' | 'center';
   compact?: boolean;
 }
@@ -13,6 +15,8 @@ const {
   overline,
   title,
   alt,
+  summary = '',
+  serial = 'TSB',
   align = 'left',
   compact = false,
 } = Astro.props;
@@ -25,87 +29,122 @@ function withBase(path: string): string {
 ---
 
 <section class:list={['page-hero', compact && 'page-hero--compact']}>
-  <img class="page-hero__media" src={withBase(image)} alt={alt} width="1600" height="900" loading="eager" decoding="async" />
-  <div class="page-hero__veil" aria-hidden="true"></div>
-  <div class:list={['page-hero__content', `page-hero__content--${align}`]}>
-    <span class="page-hero__overline">{overline}</span>
-    <h1 class="page-hero__title">{title}</h1>
+  <div class="page-hero__media-wrap">
+    <img class="page-hero__media" src={withBase(image)} alt={alt} width="1600" height="960" loading="eager" decoding="async" data-parallax="10" />
+    <div class="page-hero__veil" aria-hidden="true"></div>
+  </div>
+
+  <div class="page-hero__content container">
+    <div class:list={['page-hero__copy editorial-panel', `page-hero__copy--${align}`]} data-reveal>
+      <div class="meta-strip">
+        <span>{overline}</span>
+        <span>{serial}</span>
+      </div>
+      <h1 class="page-hero__title text-balance" data-split>{title}</h1>
+      {summary && <p class="page-hero__summary">{summary}</p>}
+    </div>
   </div>
 </section>
 
 <style>
   .page-hero {
     position: relative;
-    min-height: 24rem;
-    overflow: clip;
-    isolation: isolate;
+    min-height: 32rem;
+    padding: clamp(1rem, 2vw, 1.5rem);
   }
 
   .page-hero--compact {
-    min-height: 21rem;
+    min-height: 27rem;
+  }
+
+  .page-hero__media-wrap {
+    position: absolute;
+    inset: 0;
+    overflow: clip;
   }
 
   .page-hero__media,
   .page-hero__veil {
     position: absolute;
     inset: 0;
+    width: 100%;
+    height: 100%;
   }
 
   .page-hero__media {
-    width: 100%;
-    height: 100%;
     object-fit: cover;
   }
 
   .page-hero__veil {
     background:
-      linear-gradient(110deg, rgba(243, 240, 234, 0.82) 0%, rgba(243, 240, 234, 0.18) 44%, rgba(26, 25, 22, 0.28) 100%);
+      linear-gradient(180deg, rgba(31, 26, 21, 0.35) 0%, rgba(31, 26, 21, 0.55) 100%);
   }
 
   .page-hero__content {
     position: relative;
     z-index: 1;
-    display: grid;
-    gap: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
     min-height: inherit;
-    width: min(100%, var(--layout-max-width));
-    margin-inline: auto;
-    padding: clamp(5rem, 8vw, 7rem) clamp(1.5rem, 6vw, 5rem) clamp(2.25rem, 4vw, 3.5rem);
+    padding-top: clamp(6rem, 10vw, 8rem);
+    padding-bottom: clamp(2rem, 4vw, 3rem);
   }
 
-  .page-hero__content--center {
-    place-content: center;
+  .page-hero__content :global(.meta-strip) {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .page-hero__copy {
+    width: min(34rem, 100%);
+    color: var(--color-white);
+    /* Override editorial-panel background inside hero — text must be visible over dark image. */
+    background: rgba(0, 0, 0, 0.45) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    backdrop-filter: blur(4px);
+  }
+
+  .page-hero__copy::after {
+    border-color: rgba(255, 255, 255, 0.15) !important;
+  }
+
+  .page-hero__copy--center {
+    margin-inline: auto;
     text-align: center;
   }
 
-  .page-hero__content--left {
-    place-content: end start;
-  }
-
-  .page-hero__overline {
-    font-size: var(--text-xs);
-    letter-spacing: var(--ls-widest);
-    text-transform: uppercase;
-    color: var(--color-ink-light);
+  .page-hero__copy--center .meta-strip {
+    justify-content: center;
   }
 
   .page-hero__title {
     font-family: var(--font-display);
-    font-size: clamp(3.5rem, 8vw, 5.5rem);
-    line-height: 0.9;
+    font-size: clamp(3rem, 7vw, 5.4rem);
     font-weight: 400;
-    letter-spacing: 0;
-    max-width: 10ch;
+    line-height: 0.9;
+    color: var(--color-white);
+  }
+
+  .page-hero__summary {
+    max-width: 34ch;
+    font-size: var(--text-body-lg);
+    line-height: 1.85;
+    color: rgba(255,255,255,0.8);
   }
 
   @media (max-width: 720px) {
     .page-hero,
     .page-hero--compact {
-      min-height: 17rem;
+      min-height: 23rem;
+      padding-inline: 0;
     }
 
     .page-hero__veil {
-      background: linear-gradient(180deg, rgba(243, 240, 234, 0.7) 0%, rgba(26, 25, 22, 0.38) 100%);
+      background: linear-gradient(180deg, rgba(243, 240, 234, 0.78) 0%, rgba(31, 26, 21, 0.48) 100%);
+    }
+
+    .page-hero__copy {
+      width: 100%;
     }
   }
 </style>

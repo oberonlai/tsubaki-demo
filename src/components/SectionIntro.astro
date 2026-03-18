@@ -1,0 +1,52 @@
+---
+interface Props {
+  overline: string;
+  title: string;
+  lede?: string;
+  detail?: string;
+  align?: 'split' | 'stack';
+}
+
+const {
+  overline,
+  title,
+  lede = '',
+  detail = '',
+  align = 'split',
+} = Astro.props;
+---
+
+<div class:list={['section-intro', `section-intro--${align}`]} data-reveal>
+  <div class="section-intro__head section-header">
+    <span class="section-overline">{overline}</span>
+    <h2 class="section-title text-balance" data-split>{title}</h2>
+  </div>
+  <div class="section-intro__body content-flow">
+    {lede && <p class="lede">{lede}</p>}
+    {detail && <p class="section-intro__detail">{detail}</p>}
+    <slot />
+  </div>
+</div>
+
+<style>
+  .section-intro {
+    display: grid;
+    gap: clamp(1.25rem, 3vw, 3rem);
+    align-items: start;
+  }
+
+  .section-intro--split {
+    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  }
+
+  .section-intro__detail {
+    max-width: 60ch;
+    color: var(--color-ink-muted);
+  }
+
+  @media (max-width: 900px) {
+    .section-intro--split {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

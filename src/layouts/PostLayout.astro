@@ -1,7 +1,4 @@
 ---
-/**
- * Article layout — single column, max-width 720px, no sidebar.
- */
 import BaseLayout from './BaseLayout.astro';
 import TagCloud from '../components/TagCloud.astro';
 
@@ -17,7 +14,6 @@ interface Props {
 
 const {
   title,
-  titleEn,
   description,
   date,
   updatedDate,
@@ -25,14 +21,12 @@ const {
   tags = [],
 } = Astro.props;
 
-const formattedDate = date.toLocaleDateString('en-US', {
-  year: 'numeric',
-  month: '2-digit',
-  day: '2-digit',
-});
-const formattedUpdatedDate = updatedDate
-  ? updatedDate.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' })
-  : null;
+function formatDate(d: Date): string {
+  return `${d.getFullYear()}.${d.getMonth() + 1}.${d.getDate()}`;
+}
+
+const formattedDate = formatDate(date);
+const formattedUpdatedDate = updatedDate ? formatDate(updatedDate) : null;
 
 function withBase(path: string): string {
   if (/^(?:[a-z]+:)?\/\//i.test(path)) return path;
@@ -45,222 +39,179 @@ const tagList = tags.map((name) => ({ name, count: 0 }));
 
 <BaseLayout title={title} description={description}>
   <article class="post-article">
-    <div class="container">
 
-      <!-- Article header -->
-      <header class="post-header">
-        {tags.length > 0 && (
-          <div class="post-header__tags">
-            {tags.map((tag) => (
-              <a href={withBase(`/tags/${tag}`)} class="post-tag">{tag}</a>
-            ))}
-          </div>
-        )}
+    <!-- ARTICLE HEADER: matches news-article reference screenshot -->
+    <section class="section post-header-section">
+      <div class="container">
+        <div class="post-header" data-reveal>
+          <span class="section-overline">お知らせ</span>
+          <h1 class="post-page-label">News</h1>
+          <hr class="post-header__rule" aria-hidden="true" />
+          <time class="post-header__date" datetime={date.toISOString()}>{formattedDate}</time>
+          {formattedUpdatedDate && <span class="post-header__updated">Updated {formattedUpdatedDate}</span>}
+          <h2 class="post-title">{title}</h2>
 
-        <h1 class="post-title">
-          <span class="post-title__ja">{title}</span>
-          {titleEn && <span class="post-title__en">{titleEn}</span>}
-        </h1>
-
-        <div class="post-meta">
-          <time class="post-meta__date" datetime={date.toISOString()}>
-            {formattedDate}
-          </time>
-          {formattedUpdatedDate && (
-            <span class="post-meta__updated">Updated {formattedUpdatedDate}</span>
+          {tags.length > 0 && (
+            <div class="post-header__tags">
+              {tags.map((tag) => (
+                <span class="post-tag">[ {tag} ]</span>
+              ))}
+            </div>
           )}
         </div>
-      </header>
-
-      <!-- Hero image -->
-      {heroImage && (
-        <div class="post-hero">
-          <img
-            src={withBase(heroImage)}
-            alt={title}
-            class="post-hero__img"
-            width="1440"
-            height="810"
-            loading="eager"
-            decoding="async"
-          />
-        </div>
-      )}
-
-      <!-- Article prose -->
-      <div class="post-body">
-        <slot />
       </div>
+    </section>
 
-      <!-- Tags -->
-      {tags.length > 0 && (
-        <footer class="post-footer">
-          <div class="post-footer__tags">
-            <h2 class="section-heading">
-              <span class="heading-ja">Tags</span>
-              <span class="heading-en">Tags</span>
-            </h2>
+    <!-- ARTICLE BODY -->
+    <section class="section post-body-section">
+      <div class="container">
+        {heroImage && (
+          <figure class="post-hero" data-reveal>
+            <img
+              src={withBase(heroImage)}
+              alt={title}
+              class="post-hero__img"
+              width="1440"
+              height="900"
+              loading="eager"
+              decoding="async"
+            />
+          </figure>
+        )}
+
+        <div class="post-body" data-reveal>
+          <slot />
+        </div>
+      </div>
+    </section>
+
+    <!-- BACK TO LIST -->
+    <section class="section post-footer-section">
+      <div class="container">
+        <hr class="post-footer__rule" aria-hidden="true" />
+        <a href={withBase('/news')} class="back-link">← 一覧に戻る</a>
+        <hr class="post-footer__rule" aria-hidden="true" />
+      </div>
+    </section>
+
+    {tags.length > 0 && (
+      <section class="section">
+        <div class="container">
+          <div class="post-tags-footer" data-reveal>
             <TagCloud tags={tagList} />
           </div>
-        </footer>
-      )}
+        </div>
+      </section>
+    )}
 
-    </div>
   </article>
 </BaseLayout>
 
 <style>
-  .post-article {
-    padding-top: var(--space-12);
-    padding-bottom: var(--space-16);
+  .post-header-section {
+    padding-bottom: 0;
   }
 
-  /* Header */
   .post-header {
-    max-width: var(--layout-article-width);
-    margin-inline: auto;
-    margin-bottom: var(--space-8);
+    display: grid;
+    gap: 0.8rem;
+    max-width: 44rem;
+  }
+
+  .post-page-label {
+    font-family: var(--font-display);
+    font-size: var(--text-hero);
+    font-weight: 400;
+    line-height: 0.95;
+    color: var(--color-ink);
+  }
+
+  .post-header__rule {
+    width: 3.5rem;
+    height: 1px;
+    background: var(--color-rule);
+    border: none;
+    margin: 0.5rem 0;
+  }
+
+  .post-header__date {
+    font-size: var(--text-sm);
+    color: var(--color-ink-light);
+    letter-spacing: 0.04em;
+  }
+
+  .post-header__updated {
+    font-size: var(--text-xs);
+    color: var(--color-ink-light);
+  }
+
+  .post-title {
+    font-family: var(--font-serif-jp);
+    font-size: clamp(1.4rem, 3vw, 2.2rem);
+    font-weight: 700;
+    line-height: 1.5;
+    color: var(--color-ink);
+    max-width: 680px;
   }
 
   .post-header__tags {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-2);
-    margin-bottom: var(--space-4);
+    gap: 0.5rem;
   }
 
   .post-tag {
-    font-size: var(--text-caption);
-    letter-spacing: var(--ls-tight);
-    color: var(--color-text-secondary);
-    border: 1px solid var(--color-border);
-    padding: 2px 10px;
-    border-radius: var(--radius-sm);
-    text-decoration: none;
-    transition:
-      background-color var(--transition-fast),
-      color var(--transition-fast);
+    font-size: var(--text-xs);
+    color: var(--color-ink-mid);
+    letter-spacing: 0.04em;
   }
 
-  .post-tag:hover {
-    background-color: var(--color-accent);
-    color: var(--color-bg-surface);
-    border-color: var(--color-accent);
-  }
-
-  .post-title {
-    margin-bottom: var(--space-4);
-  }
-
-  .post-title__ja {
-    display: block;
-    font-size: var(--text-h1);
-    font-weight: 500;
-    line-height: var(--lh-heading);
-    letter-spacing: var(--ls-base);
-    color: var(--color-text-primary);
-  }
-
-  .post-title__en {
-    display: block;
-    font-size: var(--text-subtitle-en);
-    font-weight: 400;
-    letter-spacing: var(--ls-wide);
-    color: var(--color-text-secondary);
-    text-transform: uppercase;
-    margin-top: var(--space-2);
-  }
-
-  .post-meta {
-    display: flex;
-    align-items: center;
-    gap: var(--space-4);
-  }
-
-  .post-meta__date,
-  .post-meta__updated {
-    font-size: var(--text-caption);
-    letter-spacing: var(--ls-tight);
-    color: var(--color-text-secondary);
-  }
-
-  /* Hero */
   .post-hero {
-    max-width: var(--layout-article-width);
-    margin-inline: auto;
-    margin-bottom: var(--space-8);
+    margin-bottom: var(--space-xl);
+    overflow: clip;
   }
 
   .post-hero__img {
     width: 100%;
-    height: auto;
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 1.6;
     object-fit: cover;
-    border-radius: var(--radius-sm);
   }
 
-  /* Body prose */
   .post-body {
-    max-width: var(--layout-article-width);
-    margin-inline: auto;
-    font-size: var(--text-body);
-    line-height: var(--lh-body);
-    letter-spacing: var(--ls-base);
-    color: var(--color-text-primary);
+    max-width: 680px;
+    font-family: var(--font-sans-jp);
+    font-size: var(--text-body-lg);
+    line-height: 2;
+    color: var(--color-ink);
   }
 
   .post-body :global(h2) {
     font-size: var(--text-h2);
-    font-weight: 500;
-    letter-spacing: var(--ls-base);
-    margin-top: var(--space-10);
-    margin-bottom: var(--space-5);
+    font-family: var(--font-serif-jp);
+    font-weight: 600;
+    line-height: 1.3;
+    margin: 3rem 0 1rem;
   }
 
   .post-body :global(h3) {
     font-size: var(--text-h3);
-    font-weight: 500;
-    letter-spacing: var(--ls-base);
-    margin-top: var(--space-8);
-    margin-bottom: var(--space-4);
+    font-weight: 600;
+    margin: 2.25rem 0 0.9rem;
   }
 
   .post-body :global(p) {
-    margin-bottom: var(--space-5);
+    margin-bottom: 1.3rem;
   }
 
   .post-body :global(img) {
     width: 100%;
-    height: auto;
-    border-radius: var(--radius-sm);
-    margin-block: var(--space-6);
-  }
-
-  .post-body :global(blockquote) {
-    border-left: 3px solid var(--color-accent);
-    padding-left: var(--space-5);
-    margin-inline: 0;
-    color: var(--color-text-secondary);
-    font-size: var(--text-feature);
-    line-height: var(--lh-feature);
-    letter-spacing: var(--ls-feature);
-  }
-
-  .post-body :global(a) {
-    color: var(--color-accent-dark);
-    text-decoration: underline;
-    text-underline-offset: 2px;
-    transition: color var(--transition-fast);
-  }
-
-  .post-body :global(a:hover) {
-    color: var(--color-text-primary);
+    margin-block: 2rem;
   }
 
   .post-body :global(ul),
   .post-body :global(ol) {
-    padding-left: var(--space-5);
-    margin-bottom: var(--space-5);
+    margin: 1.25rem 0 1.6rem 1.3rem;
+    padding-left: 1rem;
   }
 
   .post-body :global(ul) {
@@ -272,48 +223,41 @@ const tagList = tags.map((name) => ({ name, count: 0 }));
   }
 
   .post-body :global(li) {
-    margin-bottom: var(--space-2);
+    margin-bottom: 0.55rem;
   }
 
-  .post-body :global(code) {
-    font-family: monospace;
-    font-size: 0.875em;
-    background-color: var(--color-bg-input);
-    padding: 2px 6px;
-    border-radius: var(--radius-sm);
+  .post-body :global(a) {
+    color: var(--color-gold-deep);
+    text-decoration: underline;
+    text-underline-offset: 0.16em;
   }
 
-  .post-body :global(pre) {
-    background-color: var(--color-text-primary);
-    color: var(--color-bg-primary);
-    padding: var(--space-5);
-    border-radius: var(--radius-sm);
-    overflow-x: auto;
-    margin-block: var(--space-6);
+  .post-footer-section {
+    padding-top: 0;
   }
 
-  .post-body :global(pre code) {
-    background: none;
-    padding: 0;
-    font-size: var(--text-body);
+  .post-footer__rule {
+    width: 100%;
+    height: 1px;
+    background: var(--color-rule);
+    border: none;
+    margin: 0;
   }
 
-  /* Footer */
-  .post-footer {
-    max-width: var(--layout-article-width);
-    margin-inline: auto;
-    margin-top: var(--space-10);
-    padding-top: var(--space-8);
-    border-top: var(--border-default);
+  .back-link {
+    display: inline-block;
+    padding: 1.2rem 0;
+    font-size: var(--text-sm);
+    color: var(--color-ink-mid);
+    letter-spacing: 0.04em;
+    transition: color var(--transition-fast);
   }
 
-  .post-footer__tags {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
+  .back-link:hover {
+    color: var(--color-gold);
   }
 
-  .post-footer .section-heading {
-    margin-bottom: var(--space-4);
+  .post-tags-footer {
+    padding-block: var(--space-lg);
   }
 </style>
