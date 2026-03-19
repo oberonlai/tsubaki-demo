@@ -24,16 +24,36 @@ const storeList = [
 
 <BaseLayout title="Tsubaki" description={siteDescription}>
 
-  <!-- HERO: Full-width dark street photo with text overlay -->
-  <section class="home-hero">
-    <div class="home-hero__media">
-      <img src={withBase('/images/hero-left.jpg')} alt="Tsubaki district" width="1600" height="900" loading="eager" decoding="async" data-parallax="8" />
-      <div class="home-hero__veil" aria-hidden="true"></div>
-    </div>
-    <div class="home-hero__overlay" data-reveal>
-      <p class="home-hero__copy-jp">
-        Step into Tsubaki.<br />Here you will find treasured things,<br />people, and encounters with community.<br /><br />And little by little,<br />new places worth sharing<br />continue to grow.<br /><br />Tsubaki
-      </p>
+  <!-- HERO: Project collage -->
+  <section class="project-section project-section--hero section">
+    <div class="project-collage" data-reveal>
+      <!-- Scattered photos around the main hand illustration. -->
+      <figure class="project-photo project-photo--1" data-parallax="80">
+        <img src={withBase('/images/gallery-1.jpg')} alt="Local shop scene" width="280" height="360" loading="eager" decoding="async" />
+      </figure>
+      <figure class="project-photo project-photo--2" data-parallax="40">
+        <img src={withBase('/images/gallery-2.jpg')} alt="Local craft" width="220" height="280" loading="eager" decoding="async" />
+      </figure>
+      <figure class="project-photo project-photo--3" data-parallax="100">
+        <img src={withBase('/images/gallery-3.jpg')} alt="Community gathering" width="240" height="300" loading="eager" decoding="async" />
+      </figure>
+      <figure class="project-photo project-photo--4" data-parallax="60">
+        <img src={withBase('/images/gallery-4.jpg')} alt="Artisan at work" width="260" height="320" loading="eager" decoding="async" />
+      </figure>
+
+      <div class="project-main" data-parallax="20">
+        <img src={withBase('/images/project-hand.jpg')} alt="Tsubaki Project — hand illustration" width="420" height="520" loading="eager" decoding="async" class="project-hand" />
+        <div class="project-main__text">
+          <h2 class="project-jp-title" aria-label="Tsubaki Project">
+            <span>椿</span>
+          </h2>
+          <span class="project-subtitle">Project</span>
+        </div>
+      </div>
+
+      <div class="project-badge" aria-hidden="true">
+        <span>(Tsubaki<br />Community Programme)</span>
+      </div>
     </div>
   </section>
 
@@ -71,38 +91,8 @@ const storeList = [
     </div>
   </section>
 
-  <!-- PROJECT SECTION: この好きとまれ collage + text -->
+  <!-- PROJECT SECTION: text + gallery -->
   <section class="project-section section">
-    <div class="project-collage" data-reveal>
-      <!-- Scattered photos around the main hand illustration. -->
-      <figure class="project-photo project-photo--1">
-        <img src={withBase('/images/gallery-1.jpg')} alt="Local shop scene" width="280" height="360" loading="lazy" decoding="async" />
-      </figure>
-      <figure class="project-photo project-photo--2">
-        <img src={withBase('/images/gallery-2.jpg')} alt="Local craft" width="220" height="280" loading="lazy" decoding="async" />
-      </figure>
-      <figure class="project-photo project-photo--3">
-        <img src={withBase('/images/gallery-3.jpg')} alt="Community gathering" width="240" height="300" loading="lazy" decoding="async" />
-      </figure>
-      <figure class="project-photo project-photo--4">
-        <img src={withBase('/images/gallery-4.jpg')} alt="Artisan at work" width="260" height="320" loading="lazy" decoding="async" />
-      </figure>
-
-      <div class="project-main">
-        <img src={withBase('/images/project-hand.jpg')} alt="Tsubaki Project — hand illustration" width="420" height="520" loading="lazy" decoding="async" class="project-hand" />
-        <div class="project-main__text">
-          <h2 class="project-jp-title" aria-label="Tsubaki Project">
-            <span>椿</span>
-          </h2>
-          <span class="project-subtitle">Project</span>
-        </div>
-      </div>
-
-      <div class="project-badge" aria-hidden="true">
-        <span>(Tsubaki<br />Community Programme)</span>
-      </div>
-    </div>
-
     <div class="project-body container" data-reveal>
       <div class="project-body__inner">
         <h3 class="project-heading">Would you like to join<br />the Tsubaki community?</h3>
@@ -195,49 +185,6 @@ const storeList = [
 </BaseLayout>
 
 <style>
-  /* ====== HERO ====== */
-  .home-hero {
-    position: relative;
-    height: 90vh;
-    min-height: 28rem;
-    overflow: clip;
-  }
-
-  .home-hero__media {
-    position: absolute;
-    inset: 0;
-  }
-
-  .home-hero__media img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .home-hero__veil {
-    position: absolute;
-    inset: 0;
-    background: rgba(30, 25, 18, 0.55);
-  }
-
-  .home-hero__overlay {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .home-hero__copy-jp {
-    font-family: var(--font-sans-jp);
-    font-size: clamp(0.85rem, 1.4vw, 1.05rem);
-    color: var(--color-white);
-    line-height: 2.2;
-    letter-spacing: 0.06em;
-    text-align: center;
-    max-width: 36ch;
-  }
-
   /* ====== ABOUT ====== */
   .about-section {
     padding-top: 0;
@@ -359,6 +306,10 @@ const storeList = [
   /* ====== PROJECT SECTION ====== */
   .project-section {
     overflow: clip;
+  }
+
+  .project-section--hero {
+    overflow: visible;
   }
 
   .project-collage {

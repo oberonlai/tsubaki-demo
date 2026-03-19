@@ -48,17 +48,13 @@ function revealDelay(index: number): number {
 }
 
 export async function initTsubakiMotion(root: ParentNode = document) {
-  console.log('[Tsubaki Motion] initTsubakiMotion called');
   const loaded = await loadGsapWithScrollTrigger();
   if (!loaded || typeof window === 'undefined') {
-    console.error('[Tsubaki Motion] GSAP failed to load!', { loaded, window: typeof window });
     return () => {};
   }
 
   const { gsap, ScrollTrigger } = loaded;
-  console.log('[Tsubaki Motion] GSAP loaded successfully', { gsap: !!gsap, ScrollTrigger: !!ScrollTrigger });
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  console.log('[Tsubaki Motion] reduceMotion:', reduceMotion, '(ignored for demo — animations always play)');
 
   const reveals = Array.from(root.querySelectorAll<HTMLElement>('[data-reveal]'));
   const splitNodes = Array.from(root.querySelectorAll<HTMLElement>('[data-split]'));
@@ -71,19 +67,6 @@ export async function initTsubakiMotion(root: ParentNode = document) {
   const magnetNodes = Array.from(root.querySelectorAll<HTMLElement>('[data-magnet]'));
   const counterNodes = Array.from(root.querySelectorAll<HTMLElement>('[data-counter]'));
   const scaleRevealNodes = Array.from(root.querySelectorAll<HTMLElement>('[data-scale-reveal]'));
-
-  console.log('[Tsubaki Motion] Found elements:', {
-    reveals: reveals.length,
-    splitNodes: splitNodes.length,
-    parallaxNodes: parallaxNodes.length,
-    driftNodes: driftNodes.length,
-    marqueeTracks: marqueeTracks.length,
-    faqRoots: faqRoots.length,
-    springCards: springCards.length,
-    magnetNodes: magnetNodes.length,
-    counterNodes: counterNodes.length,
-    scaleRevealNodes: scaleRevealNodes.length,
-  });
 
   const contexts: Array<{ revert?: () => void }> = [];
   const splitCleanups = splitTextNodes(splitNodes);
@@ -101,7 +84,7 @@ export async function initTsubakiMotion(root: ParentNode = document) {
 
   /* === Scroll reveals — spring-inspired ease. === */
   if (reveals.length > 0) {
-    console.log('[Tsubaki Motion] Setting up scroll reveals for', reveals.length, 'elements');
+
     const ctx = gsap.context(() => {
       reveals.forEach((node, index) => {
         const yOffset = node.dataset.revealY ? Number(node.dataset.revealY) : 36;
@@ -159,17 +142,20 @@ export async function initTsubakiMotion(root: ParentNode = document) {
   if (parallaxNodes.length > 0) {
     const ctx = gsap.context(() => {
       parallaxNodes.forEach((node) => {
-        const depth = Number(node.dataset.parallax ?? '8');
-        gsap.to(node, {
-          yPercent: depth,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: node,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 0.9,
+        const depth = Number(node.dataset.parallax ?? '50');
+        gsap.fromTo(node,
+          { y: -depth },
+          {
+            y: depth,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: node,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: 0.9,
+            },
           },
-        });
+        );
       });
     }, root as Element);
     contexts.push(ctx);
@@ -366,7 +352,6 @@ export async function initTsubakiMotion(root: ParentNode = document) {
   }
 
   ScrollTrigger.refresh();
-  console.log('[Tsubaki Motion] All animations initialized. ScrollTrigger refreshed.');
 
   return () => {
     contexts.forEach((ctx) => ctx.revert?.());
