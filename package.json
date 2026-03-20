@@ -6,11 +6,14 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview",
+    "preview": "pnpm run build && wrangler dev",
     "lint": "eslint src --ext .js,.ts,.astro",
-    "format": "prettier --write \"**/*.{js,ts,astro,css,json,md,mdx}\""
+    "format": "prettier --write \"**/*.{js,ts,astro,css,json,md,mdx}\"",
+    "generate-types": "wrangler types",
+    "deploy": "pnpm run build && wrangler deploy"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "^13.1.2",
     "@astrojs/mdx": "^5.0.1",
     "@astrojs/rss": "^4.0.17",
     "@astrojs/sitemap": "^3.7.1",
@@ -18,7 +21,8 @@
     "gsap": "^3.14.2"
   },
   "devDependencies": {
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "wrangler": "^4.75.0"
   },
   "keywords": [
     "astro-component",
